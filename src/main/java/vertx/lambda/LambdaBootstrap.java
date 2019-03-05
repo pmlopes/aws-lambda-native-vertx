@@ -91,38 +91,51 @@ public class LambdaBootstrap {
 
     if (fn == null) {
       // Not much else to do handler can't be found.
-      fail(MessageFormat.format(LAMBDA_INIT_ERROR_TEMPLATE, LAMBDA_VERSION_DATE), "Could not find handler method", "InitError");
+      fail(MessageFormat.format(LAMBDA_INIT_ERROR_TEMPLATE, LAMBDA_VERSION_DATE), "Could not find handler method", "InitError", true);
     } else {
-      client.get(port, host, runtimeUrl).send(getAbs -> {
-        if (getAbs.succeeded()) {
-          HttpResponse<Buffer> response = getAbs.result();
-
-          String requestId = response.getHeader("Lambda-Runtime-Aws-Request-Id");
-
-          try {
-            // Invoke Handler Method
-            fn.call(vertx, response)
-              .setHandler(ar -> {
-                if (ar.succeeded()) {
-                  // Post the results of Handler Invocation
-                  String invocationUrl = MessageFormat.format(LAMBDA_INVOCATION_TEMPLATE, LAMBDA_VERSION_DATE, requestId);
-                  success(invocationUrl, ar.result());
-                } else {
-                  String initErrorUrl = MessageFormat.format(LAMBDA_ERROR_TEMPLATE, LAMBDA_VERSION_DATE, requestId);
-                  fail(initErrorUrl, "Invocation Error", "RuntimeError");
-                }
-              });
-
-          } catch (Exception e) {
-            String initErrorUrl = MessageFormat.format(LAMBDA_ERROR_TEMPLATE, LAMBDA_VERSION_DATE, requestId);
-            fail(initErrorUrl, "Invocation Error", "RuntimeError");
-          }
-        } else {
-          getAbs.cause().printStackTrace();
-          System.exit(1);
-        }
-      });
+      process(vertx, runtimeUrl);
     }
+  }
+
+  private void process(Vertx vertx, String runtimeUrl) {
+    client.get(port, host, runtimeUrl).send(getAbs -> {
+      if (getAbs.succeeded()) {
+        HttpResponse<Buffer> response = getAbs.result();
+
+        if (response.statusCode() != 200) {
+          System.exit(0);
+        }
+
+        String requestId = response.getHeader("Lambda-Runtime-Aws-Request-Id");
+
+        try {
+          // Invoke Handler Method
+          fn.call(vertx, response)
+            .setHandler(ar -> {
+              if (ar.succeeded()) {
+                // Post the results of Handler Invocation
+                String invocationUrl = MessageFormat.format(LAMBDA_INVOCATION_TEMPLATE, LAMBDA_VERSION_DATE, requestId);
+                success(invocationUrl, ar.result());
+              } else {
+                String initErrorUrl = MessageFormat.format(LAMBDA_ERROR_TEMPLATE, LAMBDA_VERSION_DATE, requestId);
+                fail(initErrorUrl, "Invocation Error", "RuntimeError");
+              }
+            });
+
+        } catch (Exception e) {
+          String initErrorUrl = MessageFormat.format(LAMBDA_ERROR_TEMPLATE, LAMBDA_VERSION_DATE, requestId);
+          fail(initErrorUrl, "Invocation Error", "RuntimeError");
+        }
+
+        // process the next call
+        // run on context to avoid large stacks
+        vertx.runOnContext(v -> process(vertx, runtimeUrl));
+
+      } else {
+        getAbs.cause().printStackTrace();
+        System.exit(1);
+      }
+    });
   }
 
   private void success(String requestURI, Buffer result) {
@@ -130,7 +143,6 @@ public class LambdaBootstrap {
       .sendBuffer(result, ar -> {
         if (ar.succeeded()) {
           // we don't really care about the response
-          System.exit(0);
         } else {
           ar.cause().printStackTrace();
           System.exit(1);
@@ -139,6 +151,10 @@ public class LambdaBootstrap {
   }
 
   private void fail(String requestURI, String errMsg, String errType) {
+    fail(requestURI, errMsg, errType, false);
+  }
+
+  private void fail(String requestURI, String errMsg, String errType, boolean terminal) {
     final JsonObject error = new JsonObject()
       .put("errorMessage", errMsg)
       .put("errorType", errType);
@@ -147,7 +163,9 @@ public class LambdaBootstrap {
       .sendJson(error, ar -> {
         if (ar.succeeded()) {
           // we don't really care about the response
-          System.exit(0);
+          if (terminal) {
+            System.exit(0);
+          }
         } else {
           ar.cause().printStackTrace();
           System.exit(1);
