@@ -1,3 +1,18 @@
+/*
+ * Copyright 2019 Paulo Lopes.
+ *
+ *  All rights reserved. This program and the accompanying materials
+ *  are made available under the terms of the Eclipse Public License v1.0
+ *  and Apache License v2.0 which accompanies this distribution.
+ *
+ *  The Eclipse Public License is available at
+ *  http://www.eclipse.org/legal/epl-v10.html
+ *
+ *  The Apache License v2.0 is available at
+ *  http://www.opensource.org/licenses/apache2.0.php
+ *
+ *  You may elect to redistribute this code under either of these licenses.
+ */
 package vertx.lambda;
 
 import io.vertx.core.Vertx;
@@ -5,8 +20,6 @@ import io.vertx.core.buffer.Buffer;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.client.HttpResponse;
 import io.vertx.ext.web.client.WebClient;
-import io.vertx.core.AbstractVerticle;
-import io.vertx.core.Handler;
 
 import static java.lang.System.getenv;
 
@@ -15,17 +28,25 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.ServiceLoader;
 
+/**
+ * Main entrypoint for the application.
+ */
 public class LambdaBootstrap {
 
   private static final String LAMBDA_VERSION_DATE = "2018-06-01";
-  private static final String LAMBDA_RUNTIME_URL_TEMPLATE = "http://{0}/{1}/runtime/invocation/next";
-  private static final String LAMBDA_INVOCATION_URL_TEMPLATE = "http://{0}/{1}/runtime/invocation/{2}/response";
-  private static final String LAMBDA_INIT_ERROR_URL_TEMPLATE = "http://{0}/{1}/runtime/init/error";
-  private static final String LAMBDA_ERROR_URL_TEMPLATE = "http://{0}/{1}/runtime/invocation/{2}/error";
+
+  private static final String LAMBDA_RUNTIME_TEMPLATE = "/{0}/runtime/invocation/next";
+  private static final String LAMBDA_INVOCATION_TEMPLATE = "/{0}/runtime/invocation/{1}/response";
+  private static final String LAMBDA_INIT_ERROR_TEMPLATE = "/{0}/runtime/init/error";
+  private static final String LAMBDA_ERROR_TEMPLATE = "/{0}/runtime/invocation/{1}/error";
 
   private static final Map<String, Lambda> HANDLERS = new HashMap<>();
 
   static {
+    System.setProperty("vertx.disableDnsResolver", "true");
+    System.setProperty("vertx.cacheDirBase", "/tmp/vertx-cache");
+    System.setProperty("java.net.preferIPv4Stack", "true");
+
     // load all handlers available, if this becomes a performance
     ServiceLoader<Lambda> serviceLoader = ServiceLoader.load(Lambda.class);
     for (Lambda fn : serviceLoader) {
@@ -34,64 +55,78 @@ public class LambdaBootstrap {
   }
 
   public static void main(String[] args) {
-    new LambdaBootstrap(Vertx.vertx());
+    try {
+      new LambdaBootstrap(Vertx.vertx());
+    } catch (RuntimeException e) {
+      e.printStackTrace();
+      System.exit(1);
+    }
   }
 
   private final WebClient client;
 
-  private final String runtimeApi;
   private final Lambda fn;
+
+  private final String host;
+  private final int port;
 
   private LambdaBootstrap(Vertx vertx) {
     // create an WebClient
     this.client = WebClient.create(vertx);
 
-    this.runtimeApi = getenv("AWS_LAMBDA_RUNTIME_API");
+    String runtimeApi = getenv("AWS_LAMBDA_RUNTIME_API");
+
+    int sep = runtimeApi.indexOf(':');
+    if (sep != -1) {
+      host = runtimeApi.substring(0, sep);
+      port = Integer.parseInt(runtimeApi.substring(sep + 1));
+    } else {
+      host = runtimeApi;
+      port = 80;
+    }
+
     // Get the handler class and method name from the Lambda Configuration in the format of <fqcn>
     this.fn = HANDLERS.get(getenv("_HANDLER"));
-    final String runtimeUrl = MessageFormat.format(LAMBDA_RUNTIME_URL_TEMPLATE, runtimeApi, LAMBDA_VERSION_DATE);
+    final String runtimeUrl = MessageFormat.format(LAMBDA_RUNTIME_TEMPLATE, LAMBDA_VERSION_DATE);
 
     if (fn == null) {
       // Not much else to do handler can't be found.
-      fail(MessageFormat.format(LAMBDA_INIT_ERROR_URL_TEMPLATE, runtimeApi, LAMBDA_VERSION_DATE), "Could not find handler method", "InitError");
-      return;
-    }
+      fail(MessageFormat.format(LAMBDA_INIT_ERROR_TEMPLATE, LAMBDA_VERSION_DATE), "Could not find handler method", "InitError");
+    } else {
+      client.get(port, host, runtimeUrl).send(getAbs -> {
+        if (getAbs.succeeded()) {
+          HttpResponse<Buffer> response = getAbs.result();
 
-    client.getAbs(runtimeUrl).send(getAbs -> {
-      if (getAbs.succeeded()) {
-        HttpResponse<Buffer> response = getAbs.result();
+          String requestId = response.getHeader("Lambda-Runtime-Aws-Request-Id");
 
-        String requestId = response.getHeader("Lambda-Runtime-Aws-Request-Id");
+          try {
+            // Invoke Handler Method
+            fn.call(vertx, response)
+              .setHandler(ar -> {
+                if (ar.succeeded()) {
+                  // Post the results of Handler Invocation
+                  String invocationUrl = MessageFormat.format(LAMBDA_INVOCATION_TEMPLATE, LAMBDA_VERSION_DATE, requestId);
+                  success(invocationUrl, ar.result());
+                } else {
+                  String initErrorUrl = MessageFormat.format(LAMBDA_ERROR_TEMPLATE, LAMBDA_VERSION_DATE, requestId);
+                  fail(initErrorUrl, "Invocation Error", "RuntimeError");
+                }
+              });
 
-        try {
-          // Invoke Handler Method
-          fn.call(response.body())
-            .setHandler(ar -> {
-              if (ar.succeeded()) {
-                // Post the results of Handler Invocation
-                String invocationUrl = MessageFormat.format(LAMBDA_INVOCATION_URL_TEMPLATE, runtimeApi, LAMBDA_VERSION_DATE, requestId);
-                success(invocationUrl, ar.result());
-              } else {
-                String initErrorUrl = MessageFormat.format(LAMBDA_ERROR_URL_TEMPLATE, runtimeApi, LAMBDA_VERSION_DATE, requestId);
-                fail(initErrorUrl, "Invocation Error", "RuntimeError");
-                ar.cause().printStackTrace();
-              }
-            });
-
-        } catch (Exception e) {
-          String initErrorUrl = MessageFormat.format(LAMBDA_ERROR_URL_TEMPLATE, runtimeApi, LAMBDA_VERSION_DATE, requestId);
-          fail(initErrorUrl, "Invocation Error", "RuntimeError");
-          e.printStackTrace();
+          } catch (Exception e) {
+            String initErrorUrl = MessageFormat.format(LAMBDA_ERROR_TEMPLATE, LAMBDA_VERSION_DATE, requestId);
+            fail(initErrorUrl, "Invocation Error", "RuntimeError");
+          }
+        } else {
+          getAbs.cause().printStackTrace();
+          System.exit(1);
         }
-      } else {
-        getAbs.cause().printStackTrace();
-      }
-    });
+      });
+    }
   }
 
-  private void success(String successUrl, Buffer result) {
-
-    client.postAbs(successUrl)
+  private void success(String requestURI, Buffer result) {
+    client.post(port, host, requestURI)
       .sendBuffer(result, ar -> {
         if (ar.succeeded()) {
           // we don't really care about the response
@@ -103,13 +138,12 @@ public class LambdaBootstrap {
       });
   }
 
-  private void fail(String errorUrl, String errMsg, String errType) {
-
+  private void fail(String requestURI, String errMsg, String errType) {
     final JsonObject error = new JsonObject()
       .put("errorMessage", errMsg)
       .put("errorType", errType);
 
-    client.postAbs(errorUrl)
+    client.post(port, host, requestURI)
       .sendJson(error, ar -> {
         if (ar.succeeded()) {
           // we don't really care about the response
