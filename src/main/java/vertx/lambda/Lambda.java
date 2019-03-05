@@ -16,9 +16,9 @@
 package vertx.lambda;
 
 import io.vertx.core.Future;
+import io.vertx.core.MultiMap;
 import io.vertx.core.Vertx;
 import io.vertx.core.buffer.Buffer;
-import io.vertx.ext.web.client.HttpResponse;
 
 /**
  * The functional interface that represents a lambda
@@ -30,8 +30,9 @@ public interface Lambda {
    * Responses are asynchronous.
    *
    * @param vertx the vertx instance if needed for more IO
-   * @param request the function request
+   * @param headers the request headers
+   * @param body the request body (null if no body)
    * @return return a future with the buffer to be returned.
    */
-  Future<Buffer> call(Vertx vertx, HttpResponse<Buffer> request);
+  Future<Buffer> call(Vertx vertx, MultiMap headers, Buffer body);
 }

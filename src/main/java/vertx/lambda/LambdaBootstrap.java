@@ -15,6 +15,9 @@
  */
 package vertx.lambda;
 
+import io.vertx.core.AsyncResult;
+import io.vertx.core.Future;
+import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
 import io.vertx.core.buffer.Buffer;
 import io.vertx.core.json.JsonObject;
@@ -91,7 +94,8 @@ public class LambdaBootstrap {
 
     if (fn == null) {
       // Not much else to do handler can't be found.
-      fail(MessageFormat.format(LAMBDA_INIT_ERROR_TEMPLATE, LAMBDA_VERSION_DATE), "Could not find handler method", "InitError", true);
+      final String uri = MessageFormat.format(LAMBDA_INIT_ERROR_TEMPLATE, LAMBDA_VERSION_DATE);
+      fail(uri, "Could not find handler method", "InitError");
     } else {
       process(vertx, runtimeUrl);
     }
@@ -110,12 +114,22 @@ public class LambdaBootstrap {
 
         try {
           // Invoke Handler Method
-          fn.call(vertx, response)
+          fn.call(vertx, response.headers(), response.body())
             .setHandler(ar -> {
               if (ar.succeeded()) {
                 // Post the results of Handler Invocation
                 String invocationUrl = MessageFormat.format(LAMBDA_INVOCATION_TEMPLATE, LAMBDA_VERSION_DATE, requestId);
-                success(invocationUrl, ar.result());
+                success(invocationUrl, ar.result(), ack -> {
+                  if (ack.failed()) {
+                    ack.cause().printStackTrace();
+                    // terminate the process
+                    System.exit(1);
+                  } else {
+                    // process the next call
+                    // run on context to avoid large stacks
+                    vertx.runOnContext(v -> process(vertx, runtimeUrl));
+                  }
+                });
               } else {
                 String initErrorUrl = MessageFormat.format(LAMBDA_ERROR_TEMPLATE, LAMBDA_VERSION_DATE, requestId);
                 fail(initErrorUrl, "Invocation Error", "RuntimeError");
@@ -126,11 +140,6 @@ public class LambdaBootstrap {
           String initErrorUrl = MessageFormat.format(LAMBDA_ERROR_TEMPLATE, LAMBDA_VERSION_DATE, requestId);
           fail(initErrorUrl, "Invocation Error", "RuntimeError");
         }
-
-        // process the next call
-        // run on context to avoid large stacks
-        vertx.runOnContext(v -> process(vertx, runtimeUrl));
-
       } else {
         getAbs.cause().printStackTrace();
         System.exit(1);
@@ -138,38 +147,30 @@ public class LambdaBootstrap {
     });
   }
 
-  private void success(String requestURI, Buffer result) {
+  private void success(String requestURI, Buffer result, Handler<AsyncResult<Void>> handler) {
     client.post(port, host, requestURI)
       .sendBuffer(result, ar -> {
         if (ar.succeeded()) {
           // we don't really care about the response
+          handler.handle(Future.succeededFuture());
         } else {
-          ar.cause().printStackTrace();
-          System.exit(1);
+          handler.handle(Future.failedFuture(ar.cause()));
         }
       });
   }
 
   private void fail(String requestURI, String errMsg, String errType) {
-    fail(requestURI, errMsg, errType, false);
-  }
-
-  private void fail(String requestURI, String errMsg, String errType, boolean terminal) {
     final JsonObject error = new JsonObject()
       .put("errorMessage", errMsg)
       .put("errorType", errType);
 
     client.post(port, host, requestURI)
       .sendJson(error, ar -> {
-        if (ar.succeeded()) {
-          // we don't really care about the response
-          if (terminal) {
-            System.exit(0);
-          }
-        } else {
+        if (ar.failed()) {
           ar.cause().printStackTrace();
-          System.exit(1);
         }
+        // terminate the process
+        System.exit(1);
       });
   }
 }

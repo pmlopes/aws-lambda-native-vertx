@@ -16,9 +16,9 @@
 package lambda;
 
 import io.vertx.core.Future;
+import io.vertx.core.MultiMap;
 import io.vertx.core.Vertx;
 import io.vertx.core.buffer.Buffer;
-import io.vertx.ext.web.client.HttpResponse;
 import vertx.lambda.Lambda;
 
 /**
@@ -27,7 +27,7 @@ import vertx.lambda.Lambda;
 public class EchoLambda implements Lambda {
 
   @Override
-  public Future<Buffer> call(Vertx vertx, HttpResponse<Buffer> request) {
-    return Future.succeededFuture(request.body());
+  public Future<Buffer> call(Vertx vertx, MultiMap headers, Buffer body) {
+    return Future.succeededFuture(body);
   }
 }
