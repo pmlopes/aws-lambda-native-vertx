@@ -13,26 +13,21 @@
  *
  *  You may elect to redistribute this code under either of these licenses.
  */
-package vertx.lambda;
+package lambda;
 
 import io.vertx.core.Future;
 import io.vertx.core.MultiMap;
 import io.vertx.core.Vertx;
 import io.vertx.core.buffer.Buffer;
+import vertx.lambda.Lambda;
 
 /**
- * The functional interface that represents a lambda
+ * This is a simple example of an echo Lambda.
  */
-@FunctionalInterface
-public interface Lambda {
+public class EchoLambda implements Lambda {
 
-  /**
-   * Responses are asynchronous.
-   *
-   * @param vertx the vertx instance if needed for more IO
-   * @param headers the request headers
-   * @param body the request body (null if no body)
-   * @return return a future with the buffer to be returned.
-   */
-  Future<Buffer> call(Vertx vertx, MultiMap headers, Buffer body);
+  @Override
+  public Future<Buffer> call(Vertx vertx, MultiMap headers, Buffer body) {
+    return Future.succeededFuture(body);
+  }
 }

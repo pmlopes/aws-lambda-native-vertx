@@ -10,4 +10,6 @@ node_modules
 .project
 .idea
 .vscode
-
+*.iml
+# AWS
+function.zip
