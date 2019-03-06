@@ -1,0 +1,65 @@
+Description: >
+  This template deploys a Vert.x-based native runtime image into AWS Lambda. Default values can be used for region
+  eu-west-1, if you upload your Lambda deployment package into a different bucket, you have to overwrite the
+  LambdaS3Bucket-parameter.
+
+Parameters:
+  LambdaS3Bucket:
+    Description: The S3 bucket which contains the Lambda deployment package
+    Type: String
+    Default: smoell-lambda-runtimes
+
+Resources:
+
+  LambdaTestExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub LambdaTestExecutionRole
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      Path: "/"
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+
+  VertxLayer:
+    Type: "AWS::Lambda::LayerVersion"
+    Properties:
+      CompatibleRuntimes:
+        - provided
+      Content:
+        S3Bucket: !Ref LambdaS3Bucket
+        S3Key: function.zip
+      Description: VertxLayer
+      LayerName: vertx-layer
+      LicenseInfo: Apache 2.0
+
+  VertxFunction:
+    Type: "AWS::Lambda::Function"
+    Properties:
+      FunctionName: !Sub VertxFunction-${AWS::Region}
+      Handler: lambda.QOTDLambda
+      Role: !GetAtt LambdaTestExecutionRole.Arn
+      Code:
+        S3Bucket: !Ref LambdaS3Bucket
+        S3Key: function.zip
+      Runtime: provided
+      Layers:
+        - !Ref VertxLayer
+      MemorySize: 128
+      Timeout: 5
+
+Outputs:
+
+  VertxLayer:
+    Description: The ARN of the Vertx-layer
+    Value: !Ref VertxLayer
+
+  VertxFunction:
+    Description: The ARN of the Vertx-function
+    Value: !Ref VertxFunction
+
