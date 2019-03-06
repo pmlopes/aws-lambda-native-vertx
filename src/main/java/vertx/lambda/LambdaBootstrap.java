@@ -46,10 +46,6 @@ public class LambdaBootstrap {
   private static final Map<String, Lambda> HANDLERS = new HashMap<>();
 
   static {
-    System.setProperty("vertx.disableDnsResolver", "true");
-    System.setProperty("vertx.cacheDirBase", "/tmp/vertx-cache");
-    System.setProperty("java.net.preferIPv4Stack", "true");
-
     // load all handlers available, if this becomes a performance
     ServiceLoader<Lambda> serviceLoader = ServiceLoader.load(Lambda.class);
     for (Lambda fn : serviceLoader) {
