@@ -1,5 +1,7 @@
 Description: >
-  This template deploys a Vert.x-based native runtime image into AWS Lambda.
+  This template deploys a Vert.x-based native runtime image into AWS Lambda. Default values can be used for region
+  eu-west-1, if you upload your Lambda deployment package into a different bucket, you have to overwrite the
+  LambdaS3Bucket-parameter.
 
 Parameters:
   LambdaS3Bucket:
@@ -40,7 +42,7 @@ Resources:
     Type: "AWS::Lambda::Function"
     Properties:
       FunctionName: !Sub VertxFunction-${AWS::Region}
-      Handler: function.handler
+      Handler: lambda.QOTDLambda
       Role: !GetAtt LambdaTestExecutionRole.Arn
       Code:
         S3Bucket: !Ref LambdaS3Bucket
