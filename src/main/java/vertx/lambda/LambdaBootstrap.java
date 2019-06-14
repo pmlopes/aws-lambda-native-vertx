@@ -156,6 +156,8 @@ public class LambdaBootstrap {
   }
 
   private void fail(String requestURI, String errMsg, String errType) {
+    System.err.println("ERR: " + errMsg);
+
     final JsonObject error = new JsonObject()
       .put("errorMessage", errMsg)
       .put("errorType", errType);
