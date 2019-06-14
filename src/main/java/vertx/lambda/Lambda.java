@@ -15,16 +15,17 @@
  */
 package vertx.lambda;
 
-import io.vertx.core.Future;
-import io.vertx.core.MultiMap;
+import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
 import io.vertx.core.buffer.Buffer;
+import io.vertx.core.eventbus.Message;
 
 /**
  * The functional interface that represents a lambda
  */
-@FunctionalInterface
-public interface Lambda {
+public interface Lambda extends Handler<Message<Buffer>> {
+
+  default void init(Vertx vertx) {}
 
   String LAMBDA_RUNTIME_AWS_REQUEST_ID = "Lambda-Runtime-Aws-Request-Id";
   String LAMBDA_RUNTIME_DEADLINE_MS = "Lambda-Runtime-Deadline-Ms";
@@ -32,14 +33,4 @@ public interface Lambda {
   String LAMBDA_RUNTIME_TRACE_ID = "Lambda-Runtime-Trace-Id";
   String LAMBDA_RUNTIME_CLIENT_CONTEXT = "Lambda-Runtime-Client-Context";
   String LAMBDA_RUNTIME_COGNITO_IDENTITY = "Lambda-Runtime-Cognito-Identity";
-
-  /**
-   * Responses are asynchronous.
-   *
-   * @param vertx the vertx instance if needed for more IO
-   * @param headers the request headers
-   * @param body the request body (null if no body)
-   * @return return a future with the buffer to be returned.
-   */
-  Future<Buffer> call(Vertx vertx, MultiMap headers, Buffer body);
 }

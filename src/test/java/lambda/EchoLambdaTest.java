@@ -15,39 +15,48 @@
  */
 package lambda;
 
-import io.vertx.core.Future;
-import io.vertx.core.MultiMap;
 import io.vertx.core.buffer.Buffer;
+import io.vertx.core.eventbus.EventBus;
 import io.vertx.ext.unit.Async;
 import io.vertx.ext.unit.TestContext;
 import io.vertx.ext.unit.junit.RunTestOnContext;
 import io.vertx.ext.unit.junit.VertxUnitRunner;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import vertx.lambda.Lambda;
+
+import java.util.ServiceLoader;
 
 @RunWith(VertxUnitRunner.class)
 public class EchoLambdaTest {
 
-  private final EchoLambda fn = new EchoLambda();
-
   @Rule
   public RunTestOnContext rule = new RunTestOnContext();
+
+  @Before
+  public void beforeTest() {
+    // register all lambda's into the eventbus
+    ServiceLoader<Lambda> serviceLoader = ServiceLoader.load(Lambda.class);
+    for (Lambda fn : serviceLoader) {
+      fn.init(rule.vertx());
+      rule.vertx().eventBus().localConsumer(fn.getClass().getName(), fn);
+    }
+  }
 
   @Test
   public void shouldGetAnEchoMessage(TestContext should) {
     final Async test = should.async();
+    final EventBus eb = rule.vertx().eventBus();
 
-    Future<Buffer> fut = fn.call(rule.vertx(), MultiMap.caseInsensitiveMultiMap(), Buffer.buffer("Hello World"));
-
-    fut.setHandler(call -> {
-      if (call.failed()) {
-        should.fail(call.cause());
+    eb.<Buffer>send(EchoLambda.class.getName(), Buffer.buffer("Hello World"), msg -> {
+      if (msg.failed()) {
+        should.fail(msg.cause());
       } else {
-        should.assertEquals(Buffer.buffer("Hello World"), call.result());
+        should.assertEquals(Buffer.buffer("Hello World"), msg.result().body());
         test.complete();
       }
     });
   }
-
 }

@@ -15,10 +15,8 @@
  */
 package lambda;
 
-import io.vertx.core.Future;
-import io.vertx.core.MultiMap;
-import io.vertx.core.Vertx;
 import io.vertx.core.buffer.Buffer;
+import io.vertx.core.eventbus.Message;
 import vertx.lambda.Lambda;
 
 import java.util.Random;
@@ -43,8 +41,8 @@ public class QOTDLambda implements Lambda {
   };
 
   @Override
-  public Future<Buffer> call(Vertx vertx, MultiMap headers, Buffer body) {
+  public void handle(Message<Buffer> msg) {
     // return a random qotd
-    return Future.succeededFuture(Buffer.buffer(QUOTES[RANDOM.nextInt(QUOTES.length)]));
+    msg.reply(Buffer.buffer(QUOTES[RANDOM.nextInt(QUOTES.length)]));
   }
 }

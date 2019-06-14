@@ -15,37 +15,47 @@
  */
 package lambda;
 
-import io.vertx.core.Future;
-import io.vertx.core.MultiMap;
 import io.vertx.core.buffer.Buffer;
+import io.vertx.core.eventbus.EventBus;
 import io.vertx.ext.unit.Async;
 import io.vertx.ext.unit.TestContext;
 import io.vertx.ext.unit.junit.RunTestOnContext;
 import io.vertx.ext.unit.junit.VertxUnitRunner;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import vertx.lambda.Lambda;
+
+import java.util.ServiceLoader;
 
 @RunWith(VertxUnitRunner.class)
 public class QOTDLambdaTest {
 
-  private final QOTDLambda fn = new QOTDLambda();
-
   @Rule
   public RunTestOnContext rule = new RunTestOnContext();
+
+  @Before
+  public void beforeTest() {
+    // register all lambda's into the eventbus
+    ServiceLoader<Lambda> serviceLoader = ServiceLoader.load(Lambda.class);
+    for (Lambda fn : serviceLoader) {
+      fn.init(rule.vertx());
+      rule.vertx().eventBus().localConsumer(fn.getClass().getName(), fn);
+    }
+  }
 
   @Test
   public void shouldGetAQOTD(TestContext should) {
     final Async test = should.async();
+    final EventBus eb = rule.vertx().eventBus();
 
-    Future<Buffer> fut = fn.call(rule.vertx(), MultiMap.caseInsensitiveMultiMap(), null);
-
-    fut.setHandler(call -> {
-      if (call.failed()) {
-        should.fail(call.cause());
+    eb.<Buffer>send(QOTDLambda.class.getName(), Buffer.buffer(), msg -> {
+      if (msg.failed()) {
+        should.fail(msg.cause());
       } else {
-        should.assertNotNull(call.result());
-        should.assertTrue(call.result().length() > 0);
+        should.assertNotNull(msg.result().body());
+        should.assertTrue(msg.result().body().length() > 0);
         test.complete();
       }
     });

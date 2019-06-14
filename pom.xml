@@ -89,7 +89,7 @@
         </executions>
         <configuration>
           <imageName>lambda</imageName>
-          <buildArgs>--enable-all-security-services --report-unsupported-elements-at-runtime --allow-incomplete-classpath</buildArgs>
+          <buildArgs>--enable-all-security-services --report-unsupported-elements-at-runtime --allow-incomplete-classpath --no-server</buildArgs>
         </configuration>
       </plugin>
     </plugins>
