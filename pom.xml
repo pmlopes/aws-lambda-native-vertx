@@ -11,7 +11,7 @@
   <name>aws-lambda-vertx-native</name>
 
   <properties>
-    <vertx.verticle>vertx.lambda.LambdaBootstrap</vertx.verticle>
+    <vertx.verticle>vertx.lambda.Bootstrap</vertx.verticle>
 
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <maven.compiler.target>1.8</maven.compiler.target>
@@ -89,7 +89,7 @@
         </executions>
         <configuration>
           <imageName>bootstrap</imageName>
-          <buildArgs>--enable-all-security-services --report-unsupported-elements-at-runtime --allow-incomplete-classpath</buildArgs>
+          <buildArgs>--enable-all-security-services --report-unsupported-elements-at-runtime --allow-incomplete-classpath --no-server</buildArgs>
         </configuration>
       </plugin>
       <plugin>

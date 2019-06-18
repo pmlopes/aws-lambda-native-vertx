@@ -40,7 +40,7 @@ import java.util.ServiceLoader;
 /**
  * Main entrypoint for the application.
  */
-public class LambdaBootstrap extends AbstractVerticle {
+public class Bootstrap extends AbstractVerticle {
 
   private static final String LAMBDA_VERSION_DATE = "2018-06-01";
 
@@ -48,8 +48,6 @@ public class LambdaBootstrap extends AbstractVerticle {
   private static final String LAMBDA_INVOCATION_TEMPLATE = "/{0}/runtime/invocation/{1}/response";
   private static final String LAMBDA_INIT_ERROR_TEMPLATE = "/{0}/runtime/init/error";
   private static final String LAMBDA_ERROR_TEMPLATE = "/{0}/runtime/invocation/{1}/error";
-
-  private static final ServiceLoader<Lambda> LAMBDAS = ServiceLoader.load(Lambda.class);
 
   public static void main(String[] args) {
     try {
@@ -68,7 +66,7 @@ public class LambdaBootstrap extends AbstractVerticle {
       }
       config.put("runtimeUrl", MessageFormat.format(LAMBDA_RUNTIME_TEMPLATE, LAMBDA_VERSION_DATE));
 
-      Vertx.vertx(vertxOptions).deployVerticle(new LambdaBootstrap(), deploymentOptions, deploy -> {
+      Vertx.vertx(vertxOptions).deployVerticle(new Bootstrap(), deploymentOptions, deploy -> {
         if (deploy.failed()) {
           System.err.println(deploy.cause().getMessage());
           // the whole startup failed
@@ -90,7 +88,7 @@ public class LambdaBootstrap extends AbstractVerticle {
     final EventBus eb = vertx.eventBus();
 
     // register all lambda's into the eventbus
-    for (Lambda fn : LAMBDAS) {
+    for (Lambda fn : ServiceLoader.load(Lambda.class)) {
       fn.init(vertx);
       eb.localConsumer(fn.getClass().getName(), fn);
     }
