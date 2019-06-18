@@ -16,7 +16,6 @@
 package lambda;
 
 import io.vertx.core.Vertx;
-import io.vertx.core.buffer.Buffer;
 import io.vertx.core.eventbus.DeliveryOptions;
 import io.vertx.core.eventbus.EventBus;
 import io.vertx.core.eventbus.Message;
@@ -25,7 +24,7 @@ import vertx.lambda.Lambda;
 /**
  * This is a simple example of an echo Lambda.
  */
-public class EchoLambda implements Lambda {
+public class EchoLambda implements Lambda<Object> {
 
   private EventBus eb;
 
@@ -35,7 +34,7 @@ public class EchoLambda implements Lambda {
   }
 
   @Override
-  public void handle(Message<Buffer> msg) {
+  public void handle(Message msg) {
     // showcase interop over the eventbus
     eb.send("lambda.DebugLambda", msg.body(), new DeliveryOptions().setHeaders(msg.headers()), send -> {
       // after the message was received and a reply is returned continue

@@ -15,7 +15,6 @@
  */
 package lambda;
 
-import io.vertx.core.buffer.Buffer;
 import io.vertx.core.eventbus.DeliveryOptions;
 import io.vertx.core.eventbus.Message;
 import vertx.lambda.Lambda;
@@ -23,10 +22,10 @@ import vertx.lambda.Lambda;
 /**
  * This is a simple example of a Lambda. that prints to the STDOUT the job and returns it as is.
  */
-public class DebugLambda implements Lambda {
+public class DebugLambda implements Lambda<Object> {
 
   @Override
-  public void handle(Message<Buffer> msg) {
+  public void handle(Message msg) {
     System.out.println("HEADERS: " + msg.headers());
     System.out.println("BODY: " + msg.body());
 

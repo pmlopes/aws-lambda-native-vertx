@@ -24,7 +24,7 @@ import java.util.Random;
 /**
  * A simple QOTD Lambda
  */
-public class QOTDLambda implements Lambda {
+public class QOTDLambda implements Lambda<Buffer> {
 
   private static final Random RANDOM = new Random();
 

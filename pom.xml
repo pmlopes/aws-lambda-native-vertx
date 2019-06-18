@@ -4,8 +4,8 @@
 
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>com.example</groupId>
-  <artifactId>myapp</artifactId>
+  <groupId>vertx.lambda.aws</groupId>
+  <artifactId>lambda</artifactId>
   <version>0.0.1-SNAPSHOT</version>
 
   <name>aws-lambda-vertx-native</name>
@@ -88,9 +88,27 @@
           </execution>
         </executions>
         <configuration>
-          <imageName>lambda</imageName>
-          <buildArgs>--enable-all-security-services --report-unsupported-elements-at-runtime --allow-incomplete-classpath --no-server</buildArgs>
+          <imageName>bootstrap</imageName>
+          <buildArgs>--enable-all-security-services --report-unsupported-elements-at-runtime --allow-incomplete-classpath</buildArgs>
         </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <version>3.1.1</version>
+        <configuration>
+          <descriptors>
+            <descriptor>src/assembly/function.xml</descriptor>
+          </descriptors>
+        </configuration>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>single</goal>
+            </goals>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
   </build>

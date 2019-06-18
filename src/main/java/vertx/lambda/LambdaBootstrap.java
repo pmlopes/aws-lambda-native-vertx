@@ -19,13 +19,21 @@ import io.vertx.core.*;
 import io.vertx.core.buffer.Buffer;
 import io.vertx.core.eventbus.DeliveryOptions;
 import io.vertx.core.eventbus.EventBus;
+import io.vertx.core.json.DecodeException;
+import io.vertx.core.json.EncodeException;
+import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
+import io.vertx.ext.web.client.HttpRequest;
 import io.vertx.ext.web.client.HttpResponse;
 import io.vertx.ext.web.client.WebClient;
 import io.vertx.ext.web.client.WebClientOptions;
 
+import static io.vertx.core.http.HttpHeaders.CONTENT_TYPE;
 import static java.lang.System.getenv;
 
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.text.MessageFormat;
 import java.util.ServiceLoader;
 
@@ -40,6 +48,8 @@ public class LambdaBootstrap extends AbstractVerticle {
   private static final String LAMBDA_INVOCATION_TEMPLATE = "/{0}/runtime/invocation/{1}/response";
   private static final String LAMBDA_INIT_ERROR_TEMPLATE = "/{0}/runtime/init/error";
   private static final String LAMBDA_ERROR_TEMPLATE = "/{0}/runtime/invocation/{1}/error";
+
+  private static final ServiceLoader<Lambda> LAMBDAS = ServiceLoader.load(Lambda.class);
 
   public static void main(String[] args) {
     try {
@@ -58,7 +68,6 @@ public class LambdaBootstrap extends AbstractVerticle {
       }
       config.put("runtimeUrl", MessageFormat.format(LAMBDA_RUNTIME_TEMPLATE, LAMBDA_VERSION_DATE));
 
-
       Vertx.vertx(vertxOptions).deployVerticle(new LambdaBootstrap(), deploymentOptions, deploy -> {
         if (deploy.failed()) {
           System.err.println(deploy.cause().getMessage());
@@ -73,6 +82,7 @@ public class LambdaBootstrap extends AbstractVerticle {
   }
 
   private WebClient client;
+  private String fn;
 
   @Override
   public void start() {
@@ -80,8 +90,7 @@ public class LambdaBootstrap extends AbstractVerticle {
     final EventBus eb = vertx.eventBus();
 
     // register all lambda's into the eventbus
-    ServiceLoader<Lambda> serviceLoader = ServiceLoader.load(Lambda.class);
-    for (Lambda fn : serviceLoader) {
+    for (Lambda fn : LAMBDAS) {
       fn.init(vertx);
       eb.localConsumer(fn.getClass().getName(), fn);
     }
@@ -92,18 +101,17 @@ public class LambdaBootstrap extends AbstractVerticle {
       .setDefaultHost(config.getString("host")));
 
     // Get the handler class and method name from the Lambda Configuration in the format of <fqcn>
-    final String fn = getenv("_HANDLER");
+    fn = getenv("_HANDLER");
 
     if (fn == null) {
       // Not much else to do handler can't be found.
-      final String uri = MessageFormat.format(LAMBDA_INIT_ERROR_TEMPLATE, LAMBDA_VERSION_DATE);
-      fail(uri, "Could not find handler method", "InitError");
+      fail(MessageFormat.format(LAMBDA_INIT_ERROR_TEMPLATE, LAMBDA_VERSION_DATE), "Could not find handler method [" + fn + "]");
     } else {
-      processEvents(fn);
+      processEvents();
     }
   }
 
-  private void processEvents(String fn) {
+  private void processEvents() {
     final EventBus eb = vertx.eventBus();
     final JsonObject config = context.config();
 
@@ -111,32 +119,56 @@ public class LambdaBootstrap extends AbstractVerticle {
       if (getAbs.succeeded()) {
         HttpResponse<Buffer> response = getAbs.result();
 
-        if (response.statusCode() != 200) {
-          System.err.println("ERR: HTTP status code <" + response.statusCode() + ">");
-          System.exit(0);
+        switch (response.statusCode()) {
+          case 200:
+            break;
+          case 404:
+            System.exit(0);
+          default:
+            System.err.println("ERR: HTTP status code <" + response.statusCode() + ">");
+            System.exit(1);
         }
 
         String requestId = response.getHeader(Lambda.LAMBDA_RUNTIME_AWS_REQUEST_ID);
+        Object event;
+
+        // parse body
+        if (response.headers() != null && "application/json".equals(response.headers().get(CONTENT_TYPE))) {
+          try {
+            event = new JsonObject(response.body());
+          } catch (DecodeException e) {
+            fail(MessageFormat.format(LAMBDA_ERROR_TEMPLATE, LAMBDA_VERSION_DATE, requestId), e);
+            return;
+          }
+        } else {
+          event = response.body();
+        }
 
         // Invoke Handler Method
-        eb.<Buffer>send(fn, response.body(), new DeliveryOptions().setHeaders(response.headers()), msg -> {
-          if (msg.succeeded()) {
-            // Post the results of Handler Invocation
-            String invocationUrl = MessageFormat.format(LAMBDA_INVOCATION_TEMPLATE, LAMBDA_VERSION_DATE, requestId);
-            success(invocationUrl, msg.result().body(), ack -> {
-              if (ack.failed()) {
-                System.err.println("ERR: " + ack.cause().getMessage());
-                // terminate the process
-                System.exit(1);
-              } else {
-                // process the next call
-                // run on context to avoid large stacks
-                vertx.runOnContext(v -> processEvents(fn));
-              }
-            });
+        eb.send(fn, event, new DeliveryOptions().setHeaders(response.headers()), msg -> {
+          if (msg.failed()) {
+            fail(MessageFormat.format(LAMBDA_ERROR_TEMPLATE, LAMBDA_VERSION_DATE, requestId), msg.cause());
           } else {
-            String initErrorUrl = MessageFormat.format(LAMBDA_ERROR_TEMPLATE, LAMBDA_VERSION_DATE, requestId);
-            fail(initErrorUrl, "Invocation Error", "RuntimeError");
+            // Post the results of Handler Invocation
+            final String invocationUrl = MessageFormat.format(LAMBDA_INVOCATION_TEMPLATE, LAMBDA_VERSION_DATE, requestId);
+            final MultiMap fnHeaders = msg.result().headers();
+            Object fnResult = msg.result().body();
+
+            if (fnResult instanceof JsonObject) {
+              try {
+                success(invocationUrl, (JsonObject) fnResult, fnHeaders, this::next);
+              } catch (EncodeException e) {
+                fail(MessageFormat.format(LAMBDA_ERROR_TEMPLATE, LAMBDA_VERSION_DATE, requestId), e);
+              }
+              return;
+            }
+
+            if (fnResult instanceof Buffer) {
+              success(invocationUrl, (Buffer) fnResult, fnHeaders, this::next);
+              return;
+            }
+
+            fail(MessageFormat.format(LAMBDA_ERROR_TEMPLATE, LAMBDA_VERSION_DATE, requestId), "Response is not Buffer of JSON");
           }
         });
       } else {
@@ -146,8 +178,21 @@ public class LambdaBootstrap extends AbstractVerticle {
     });
   }
 
-  private void success(String requestURI, Buffer result, Handler<AsyncResult<Void>> handler) {
+  private void next(AsyncResult<Void> ack) {
+    if (ack.failed()) {
+      ack.cause().printStackTrace();
+      // terminate the process
+      System.exit(1);
+    } else {
+      // process the next call
+      // run on context to avoid large stacks
+      vertx.runOnContext(v -> processEvents());
+    }
+  }
+
+  private void success(String requestURI, Buffer result, MultiMap header, Handler<AsyncResult<Void>> handler) {
     client.post(requestURI)
+      .putHeaders(header)
       .sendBuffer(result, ar -> {
         if (ar.succeeded()) {
           // we don't really care about the response
@@ -158,12 +203,38 @@ public class LambdaBootstrap extends AbstractVerticle {
       });
   }
 
-  private void fail(String requestURI, String errMsg, String errType) {
+  private void success(String requestURI, JsonObject result, MultiMap headers, Handler<AsyncResult<Void>> handler) {
+    final HttpRequest<Buffer> request = client.post(requestURI);
+
+    if (headers != null) {
+      request.putHeaders(headers);
+    }
+
+    request.sendJson(result, ar -> {
+        if (ar.succeeded()) {
+          // we don't really care about the response
+          handler.handle(Future.succeededFuture());
+        } else {
+          handler.handle(Future.failedFuture(ar.cause()));
+        }
+      });
+  }
+
+  private void fail(String requestURI, String errType, String errMsg, String errTrace) {
     System.err.println("ERR: " + errMsg);
 
     final JsonObject error = new JsonObject()
-      .put("errorMessage", errMsg)
-      .put("errorType", errType);
+      .put("errorType", errType)
+      .put("errorMessage", errMsg);
+
+    if (errTrace != null) {
+      final JsonArray trace = new JsonArray();
+      error.put("trace", trace);
+
+      for (String line : errTrace.split("\r?\n")) {
+        trace.add(line);
+      }
+    }
 
     client.post(requestURI)
       .sendJson(error, ar -> {
@@ -173,5 +244,23 @@ public class LambdaBootstrap extends AbstractVerticle {
         // terminate the process
         System.exit(1);
       });
+  }
+
+  private void fail(String requestURI, String errMsg) {
+    fail(requestURI, "RuntimeError", errMsg, null);
+  }
+
+  private void fail(String requestURI, Throwable throwable) {
+    try (StringWriter sw = new StringWriter()) {
+      PrintWriter pw = new PrintWriter(sw);
+      // print the thrown to String
+      throwable.printStackTrace(pw);
+
+      fail(requestURI, throwable.getClass().getSimpleName(), throwable.getMessage(), sw.toString());
+    } catch (IOException e) {
+      e.printStackTrace();
+      // terminate the process
+      System.exit(1);
+    }
   }
 }
