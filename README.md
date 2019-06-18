@@ -21,6 +21,12 @@ Make sure you have the following installed on your build machine before getting 
 $ ./mvnw package
 ```
 
+If your system cannot build working images (say to mismatch of library versions), you can build under docker:
+
+```
+docker run --rm -it -v ${PWD}:/app:z builder /bin/bash
+```
+
 ### Deploying to AWS Lambda
 
 #### Create a lambda role
