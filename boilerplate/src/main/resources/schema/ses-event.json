@@ -1,0 +1,246 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "$ref": "#/definitions/SimpleEmailEvent",
+  "definitions": {
+    "SimpleEmailCommonHeaders": {
+      "required": [
+        "from",
+        "to",
+        "returnPath",
+        "messageId",
+        "date",
+        "subject"
+      ],
+      "properties": {
+        "date": {
+          "type": "string"
+        },
+        "from": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "messageId": {
+          "type": "string"
+        },
+        "returnPath": {
+          "type": "string"
+        },
+        "subject": {
+          "type": "string"
+        },
+        "to": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "SimpleEmailEvent": {
+      "required": [
+        "Records"
+      ],
+      "properties": {
+        "Records": {
+          "items": {
+            "$schema": "http://json-schema.org/draft-04/schema#",
+            "$ref": "#/definitions/SimpleEmailRecord"
+          },
+          "type": "array"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "SimpleEmailHeader": {
+      "required": [
+        "name",
+        "value"
+      ],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "value": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "SimpleEmailMessage": {
+      "required": [
+        "commonHeaders",
+        "source",
+        "timestamp",
+        "destination",
+        "headers",
+        "headersTruncated",
+        "messageId"
+      ],
+      "properties": {
+        "commonHeaders": {
+          "$schema": "http://json-schema.org/draft-04/schema#",
+          "$ref": "#/definitions/SimpleEmailCommonHeaders"
+        },
+        "destination": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "headers": {
+          "items": {
+            "$schema": "http://json-schema.org/draft-04/schema#",
+            "$ref": "#/definitions/SimpleEmailHeader"
+          },
+          "type": "array"
+        },
+        "headersTruncated": {
+          "type": "boolean"
+        },
+        "messageId": {
+          "type": "string"
+        },
+        "source": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "SimpleEmailReceipt": {
+      "required": [
+        "recipients",
+        "timestamp",
+        "spamVerdict",
+        "dkimVerdict",
+        "dmarcVerdict",
+        "dmarcPolicy",
+        "spfVerdict",
+        "virusVerdict",
+        "action",
+        "processingTimeMillis"
+      ],
+      "properties": {
+        "action": {
+          "$schema": "http://json-schema.org/draft-04/schema#",
+          "$ref": "#/definitions/SimpleEmailReceiptAction"
+        },
+        "dkimVerdict": {
+          "$ref": "#/definitions/SimpleEmailVerdict"
+        },
+        "dmarcPolicy": {
+          "$ref": "#/definitions/SimpleEmailVerdict"
+        },
+        "dmarcVerdict": {
+          "$ref": "#/definitions/SimpleEmailVerdict"
+        },
+        "processingTimeMillis": {
+          "type": "integer"
+        },
+        "recipients": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "spamVerdict": {
+          "$schema": "http://json-schema.org/draft-04/schema#",
+          "$ref": "#/definitions/SimpleEmailVerdict"
+        },
+        "spfVerdict": {
+          "$ref": "#/definitions/SimpleEmailVerdict"
+        },
+        "timestamp": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "virusVerdict": {
+          "$ref": "#/definitions/SimpleEmailVerdict"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "SimpleEmailReceiptAction": {
+      "required": [
+        "type",
+        "invocationType",
+        "functionArn"
+      ],
+      "properties": {
+        "functionArn": {
+          "type": "string"
+        },
+        "invocationType": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "SimpleEmailRecord": {
+      "required": [
+        "eventVersion",
+        "eventSource",
+        "ses"
+      ],
+      "properties": {
+        "eventSource": {
+          "type": "string"
+        },
+        "eventVersion": {
+          "type": "string"
+        },
+        "ses": {
+          "$schema": "http://json-schema.org/draft-04/schema#",
+          "$ref": "#/definitions/SimpleEmailService"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "SimpleEmailService": {
+      "required": [
+        "mail",
+        "receipt"
+      ],
+      "properties": {
+        "mail": {
+          "$schema": "http://json-schema.org/draft-04/schema#",
+          "$ref": "#/definitions/SimpleEmailMessage"
+        },
+        "receipt": {
+          "$schema": "http://json-schema.org/draft-04/schema#",
+          "$ref": "#/definitions/SimpleEmailReceipt"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "SimpleEmailVerdict": {
+      "required": [
+        "status"
+      ],
+      "properties": {
+        "status": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    }
+  }
+}

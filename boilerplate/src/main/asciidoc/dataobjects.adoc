@@ -1,0 +1,1013 @@
+= Cheatsheets
+
+[[APIGatewayCustomAuthorizerPolicy]]
+== APIGatewayCustomAuthorizerPolicy
+
+
+[cols=">25%,25%,50%"]
+[frame="topbot"]
+|===
+^|Name | Type ^| Description
+|[[statement]]`@statement`|`Array of link:dataobjects.html#IAMPolicyStatement[IAMPolicyStatement]`|+++
+(Required)
++++
+|[[version]]`@version`|`String`|+++
+(Required)
++++
+|===
+
+[[APIGatewayCustomAuthorizerRequest]]
+== APIGatewayCustomAuthorizerRequest
+
+
+[cols=">25%,25%,50%"]
+[frame="topbot"]
+|===
+^|Name | Type ^| Description
+|[[authorizationToken]]`@authorizationToken`|`String`|+++
+(Required)
++++
+|[[methodArn]]`@methodArn`|`String`|+++
+(Required)
++++
+|[[type]]`@type`|`String`|+++
+(Required)
++++
+|===
+
+[[APIGatewayCustomAuthorizerResponse]]
+== APIGatewayCustomAuthorizerResponse
+
+
+[cols=">25%,25%,50%"]
+[frame="topbot"]
+|===
+^|Name | Type ^| Description
+|[[context]]`@context`|`Json object`|-
+|[[policyDocument]]`@policyDocument`|`link:dataobjects.html#APIGatewayCustomAuthorizerPolicy[APIGatewayCustomAuthorizerPolicy]`|+++
+(Required)
++++
+|[[principalId]]`@principalId`|`String`|+++
+(Required)
++++
+|[[usageIdentifierKey]]`@usageIdentifierKey`|`String`|-
+|===
+
+[[APIGatewayProxyRequest]]
+== APIGatewayProxyRequest
+
+
+[cols=">25%,25%,50%"]
+[frame="topbot"]
+|===
+^|Name | Type ^| Description
+|[[body]]`@body`|`String`|+++
+(Required)
++++
+|[[headers]]`@headers`|`Json object`|+++
+(Required)
++++
+|[[httpMethod]]`@httpMethod`|`String`|+++
+(Required)
++++
+|[[isBase64Encoded]]`@isBase64Encoded`|`Boolean`|-
+|[[path]]`@path`|`String`|+++
+(Required)
++++
+|[[pathParameters]]`@pathParameters`|`Json object`|+++
+(Required)
++++
+|[[queryStringParameters]]`@queryStringParameters`|`Json object`|+++
+(Required)
++++
+|[[requestContext]]`@requestContext`|`link:dataobjects.html#APIGatewayProxyRequestContext[APIGatewayProxyRequestContext]`|+++
+(Required)
++++
+|[[resource]]`@resource`|`String`|+++
+(Required)
++++
+|[[stageVariables]]`@stageVariables`|`Json object`|+++
+(Required)
++++
+|===
+
+[[APIGatewayProxyRequestContext]]
+== APIGatewayProxyRequestContext
+
+
+[cols=">25%,25%,50%"]
+[frame="topbot"]
+|===
+^|Name | Type ^| Description
+|[[accountId]]`@accountId`|`String`|+++
+(Required)
++++
+|[[apiId]]`@apiId`|`String`|+++
+(Required)
++++
+|[[authorizer]]`@authorizer`|`Json object`|+++
+(Required)
++++
+|[[httpMethod]]`@httpMethod`|`String`|+++
+(Required)
++++
+|[[identity]]`@identity`|`link:dataobjects.html#APIGatewayRequestIdentity[APIGatewayRequestIdentity]`|+++
+(Required)
++++
+|[[requestId]]`@requestId`|`String`|+++
+(Required)
++++
+|[[resourceId]]`@resourceId`|`String`|+++
+(Required)
++++
+|[[resourcePath]]`@resourcePath`|`String`|+++
+(Required)
++++
+|[[stage]]`@stage`|`String`|+++
+(Required)
++++
+|===
+
+[[APIGatewayProxyResponse]]
+== APIGatewayProxyResponse
+
+
+[cols=">25%,25%,50%"]
+[frame="topbot"]
+|===
+^|Name | Type ^| Description
+|[[body]]`@body`|`String`|+++
+(Required)
++++
+|[[headers]]`@headers`|`Json object`|+++
+(Required)
++++
+|[[isBase64Encoded]]`@isBase64Encoded`|`Boolean`|-
+|[[statusCode]]`@statusCode`|`Number (Integer)`|+++
+(Required)
++++
+|===
+
+[[APIGatewayRequestIdentity]]
+== APIGatewayRequestIdentity
+
+
+[cols=">25%,25%,50%"]
+[frame="topbot"]
+|===
+^|Name | Type ^| Description
+|[[accountId]]`@accountId`|`String`|+++
+(Required)
++++
+|[[apiKey]]`@apiKey`|`String`|+++
+(Required)
++++
+|[[caller]]`@caller`|`String`|+++
+(Required)
++++
+|[[cognitoAuthenticationProvider]]`@cognitoAuthenticationProvider`|`String`|+++
+(Required)
++++
+|[[cognitoAuthenticationType]]`@cognitoAuthenticationType`|`String`|+++
+(Required)
++++
+|[[cognitoIdentityId]]`@cognitoIdentityId`|`String`|+++
+(Required)
++++
+|[[cognitoIdentityPoolId]]`@cognitoIdentityPoolId`|`String`|+++
+(Required)
++++
+|[[sourceIp]]`@sourceIp`|`String`|+++
+(Required)
++++
+|[[user]]`@user`|`String`|+++
+(Required)
++++
+|[[userAgent]]`@userAgent`|`String`|+++
+(Required)
++++
+|[[userArn]]`@userArn`|`String`|+++
+(Required)
++++
+|===
+
+[[Attachment]]
+== Attachment
+
+
+[cols=">25%,25%,50%"]
+[frame="topbot"]
+|===
+^|Name | Type ^| Description
+|[[attachmentLinkUrl]]`@attachmentLinkUrl`|`String`|-
+|[[buttons]]`@buttons`|`Json array`|-
+|[[imageUrl]]`@imageUrl`|`String`|-
+|[[subTitle]]`@subTitle`|`String`|-
+|[[title]]`@title`|`String`|-
+|===
+
+[[CloudWatchEvent]]
+== CloudWatchEvent
+
+
+[cols=">25%,25%,50%"]
+[frame="topbot"]
+|===
+^|Name | Type ^| Description
+|[[account]]`@account`|`String`|+++
+(Required)
++++
+|[[detail]]`@detail`|`Array of Number (Integer)`|+++
+(Required)
++++
+|[[detailType]]`@detailType`|`String`|+++
+(Required)
++++
+|[[id]]`@id`|`String`|+++
+(Required)
++++
+|[[region]]`@region`|`String`|+++
+(Required)
++++
+|[[resources]]`@resources`|`Array of String`|+++
+(Required)
++++
+|[[source]]`@source`|`String`|+++
+(Required)
++++
+|[[version]]`@version`|`String`|+++
+(Required)
++++
+|===
+
+[[CloudwatchLogsEvent]]
+== CloudwatchLogsEvent
+
+
+[cols=">25%,25%,50%"]
+[frame="topbot"]
+|===
+^|Name | Type ^| Description
+|[[awslogs]]`@awslogs`|`link:dataobjects.html#CloudwatchLogsRawData[CloudwatchLogsRawData]`|+++
+(Required)
++++
+|===
+
+[[CloudwatchLogsRawData]]
+== CloudwatchLogsRawData
+
+
+[cols=">25%,25%,50%"]
+[frame="topbot"]
+|===
+^|Name | Type ^| Description
+|[[data]]`@data`|`String`|+++
+(Required)
++++
+|===
+
+[[ConfigEvent]]
+== ConfigEvent
+
+
+[cols=">25%,25%,50%"]
+[frame="topbot"]
+|===
+^|Name | Type ^| Description
+|[[accountId]]`@accountId`|`String`|+++
+(Required)
++++
+|[[configRuleArn]]`@configRuleArn`|`String`|+++
+(Required)
++++
+|[[configRuleId]]`@configRuleId`|`String`|+++
+(Required)
++++
+|[[configRuleName]]`@configRuleName`|`String`|+++
+(Required)
++++
+|[[eventLeftScope]]`@eventLeftScope`|`Boolean`|+++
+(Required)
++++
+|[[executionRoleArn]]`@executionRoleArn`|`String`|+++
+(Required)
++++
+|[[invokingEvent]]`@invokingEvent`|`String`|+++
+(Required)
++++
+|[[resultToken]]`@resultToken`|`String`|+++
+(Required)
++++
+|[[ruleParameters]]`@ruleParameters`|`String`|+++
+(Required)
++++
+|[[version]]`@version`|`String`|+++
+(Required)
++++
+|===
+
+[[IAMPolicyStatement]]
+== IAMPolicyStatement
+
+
+[cols=">25%,25%,50%"]
+[frame="topbot"]
+|===
+^|Name | Type ^| Description
+|[[action]]`@action`|`Array of String`|+++
+(Required)
++++
+|[[effect]]`@effect`|`String`|+++
+(Required)
++++
+|[[resource]]`@resource`|`Array of String`|+++
+(Required)
++++
+|===
+
+[[IoTButtonEvent]]
+== IoTButtonEvent
+
+
+[cols=">25%,25%,50%"]
+[frame="topbot"]
+|===
+^|Name | Type ^| Description
+|[[batteryVoltage]]`@batteryVoltage`|`String`|+++
+(Required)
++++
+|[[clickType]]`@clickType`|`String`|+++
+(Required)
++++
+|[[serialNumber]]`@serialNumber`|`String`|+++
+(Required)
++++
+|===
+
+[[KinesisEvent]]
+== KinesisEvent
+
+
+[cols=">25%,25%,50%"]
+[frame="topbot"]
+|===
+^|Name | Type ^| Description
+|[[records]]`@records`|`Array of link:dataobjects.html#KinesisEventRecord[KinesisEventRecord]`|+++
+(Required)
++++
+|===
+
+[[KinesisEventRecord]]
+== KinesisEventRecord
+
+
+[cols=">25%,25%,50%"]
+[frame="topbot"]
+|===
+^|Name | Type ^| Description
+|[[awsRegion]]`@awsRegion`|`String`|+++
+(Required)
++++
+|[[eventID]]`@eventID`|`String`|+++
+(Required)
++++
+|[[eventName]]`@eventName`|`String`|+++
+(Required)
++++
+|[[eventSource]]`@eventSource`|`String`|+++
+(Required)
++++
+|[[eventSourceARN]]`@eventSourceARN`|`String`|+++
+(Required)
++++
+|[[eventVersion]]`@eventVersion`|`String`|+++
+(Required)
++++
+|[[invokeIdentityArn]]`@invokeIdentityArn`|`String`|+++
+(Required)
++++
+|[[kinesis]]`@kinesis`|`link:dataobjects.html#KinesisRecord[KinesisRecord]`|+++
+(Required)
++++
+|===
+
+[[KinesisFirehoseEvent]]
+== KinesisFirehoseEvent
+
+
+[cols=">25%,25%,50%"]
+[frame="topbot"]
+|===
+^|Name | Type ^| Description
+|[[deliveryStreamArn]]`@deliveryStreamArn`|`String`|+++
+(Required)
++++
+|[[invocationId]]`@invocationId`|`String`|+++
+(Required)
++++
+|[[records]]`@records`|`Array of link:dataobjects.html#KinesisFirehoseEventRecord[KinesisFirehoseEventRecord]`|+++
+(Required)
++++
+|[[region]]`@region`|`String`|+++
+(Required)
++++
+|===
+
+[[KinesisFirehoseEventRecord]]
+== KinesisFirehoseEventRecord
+
+
+[cols=">25%,25%,50%"]
+[frame="topbot"]
+|===
+^|Name | Type ^| Description
+|[[approximateArrivalTimestamp]]`@approximateArrivalTimestamp`|`link:dataobjects.html#MilliSecondsEpochTime[MilliSecondsEpochTime]`|+++
+(Required)
++++
+|[[data]]`@data`|`Buffer`|+++
+(Required)
++++
+|[[recordId]]`@recordId`|`String`|+++
+(Required)
++++
+|===
+
+[[KinesisRecord]]
+== KinesisRecord
+
+
+[cols=">25%,25%,50%"]
+[frame="topbot"]
+|===
+^|Name | Type ^| Description
+|[[approximateArrivalTimestamp]]`@approximateArrivalTimestamp`|`link:dataobjects.html#SecondsEpochTime[SecondsEpochTime]`|+++
+(Required)
++++
+|[[data]]`@data`|`Buffer`|+++
+(Required)
++++
+|[[encryptionType]]`@encryptionType`|`String`|-
+|[[kinesisSchemaVersion]]`@kinesisSchemaVersion`|`String`|+++
+(Required)
++++
+|[[partitionKey]]`@partitionKey`|`String`|+++
+(Required)
++++
+|[[sequenceNumber]]`@sequenceNumber`|`String`|+++
+(Required)
++++
+|===
+
+[[LexBot]]
+== LexBot
+
+
+[cols=">25%,25%,50%"]
+[frame="topbot"]
+|===
+^|Name | Type ^| Description
+|[[alias]]`@alias`|`String`|-
+|[[name]]`@name`|`String`|-
+|[[version]]`@version`|`String`|-
+|===
+
+[[LexCurrentIntent]]
+== LexCurrentIntent
+
+
+[cols=">25%,25%,50%"]
+[frame="topbot"]
+|===
+^|Name | Type ^| Description
+|[[confirmationStatus]]`@confirmationStatus`|`String`|-
+|[[name]]`@name`|`String`|-
+|[[slotDetails]]`@slotDetails`|`Json object`|-
+|[[slots]]`@slots`|`Json object`|-
+|===
+
+[[LexDialogAction]]
+== LexDialogAction
+
+
+[cols=">25%,25%,50%"]
+[frame="topbot"]
+|===
+^|Name | Type ^| Description
+|[[fulfillmentState]]`@fulfillmentState`|`String`|-
+|[[intentName]]`@intentName`|`String`|-
+|[[message]]`@message`|`Json object`|-
+|[[responseCard]]`@responseCard`|`link:dataobjects.html#LexResponseCard[LexResponseCard]`|-
+|[[slotToElicit]]`@slotToElicit`|`String`|-
+|[[slots]]`@slots`|`Json object`|-
+|[[type]]`@type`|`String`|-
+|===
+
+[[LexEvent]]
+== LexEvent
+
+
+[cols=">25%,25%,50%"]
+[frame="topbot"]
+|===
+^|Name | Type ^| Description
+|[[bot]]`@bot`|`link:dataobjects.html#LexBot[LexBot]`|-
+|[[currentIntent]]`@currentIntent`|`link:dataobjects.html#LexCurrentIntent[LexCurrentIntent]`|-
+|[[dialogAction]]`@dialogAction`|`link:dataobjects.html#LexDialogAction[LexDialogAction]`|-
+|[[inputTranscript]]`@inputTranscript`|`String`|-
+|[[invocationSource]]`@invocationSource`|`String`|-
+|[[messageVersion]]`@messageVersion`|`String`|-
+|[[outputDialogMode]]`@outputDialogMode`|`String`|-
+|[[requestAttributes]]`@requestAttributes`|`Json object`|-
+|[[sessionAttributes]]`@sessionAttributes`|`Json object`|-
+|[[userId]]`@userId`|`String`|-
+|===
+
+[[LexResponseCard]]
+== LexResponseCard
+
+
+[cols=">25%,25%,50%"]
+[frame="topbot"]
+|===
+^|Name | Type ^| Description
+|[[contentType]]`@contentType`|`String`|-
+|[[genericAttachments]]`@genericAttachments`|`Array of link:dataobjects.html#Attachment[Attachment]`|-
+|[[version]]`@version`|`Number (Integer)`|-
+|===
+
+[[MilliSecondsEpochTime]]
+== MilliSecondsEpochTime
+
+
+[cols=">25%,25%,50%"]
+[frame="topbot"]
+|===
+^|Name | Type ^| Description
+|===
+
+[[S3Bucket]]
+== S3Bucket
+
+
+[cols=">25%,25%,50%"]
+[frame="topbot"]
+|===
+^|Name | Type ^| Description
+|[[arn]]`@arn`|`String`|+++
+(Required)
++++
+|[[name]]`@name`|`String`|+++
+(Required)
++++
+|[[ownerIdentity]]`@ownerIdentity`|`link:dataobjects.html#S3UserIdentity[S3UserIdentity]`|+++
+(Required)
++++
+|===
+
+[[S3Entity]]
+== S3Entity
+
+
+[cols=">25%,25%,50%"]
+[frame="topbot"]
+|===
+^|Name | Type ^| Description
+|[[bucket]]`@bucket`|`link:dataobjects.html#S3Bucket[S3Bucket]`|+++
+(Required)
++++
+|[[configurationId]]`@configurationId`|`String`|+++
+(Required)
++++
+|[[object]]`@object`|`link:dataobjects.html#S3Object[S3Object]`|+++
+(Required)
++++
+|[[s3SchemaVersion]]`@s3SchemaVersion`|`String`|+++
+(Required)
++++
+|===
+
+[[S3Event]]
+== S3Event
+
+
+[cols=">25%,25%,50%"]
+[frame="topbot"]
+|===
+^|Name | Type ^| Description
+|[[records]]`@records`|`Array of link:dataobjects.html#S3EventRecord[S3EventRecord]`|+++
+(Required)
++++
+|===
+
+[[S3EventRecord]]
+== S3EventRecord
+
+
+[cols=">25%,25%,50%"]
+[frame="topbot"]
+|===
+^|Name | Type ^| Description
+|[[awsRegion]]`@awsRegion`|`String`|+++
+(Required)
++++
+|[[eventName]]`@eventName`|`String`|+++
+(Required)
++++
+|[[eventSource]]`@eventSource`|`String`|+++
+(Required)
++++
+|[[eventVersion]]`@eventVersion`|`String`|+++
+(Required)
++++
+|[[requestParameters]]`@requestParameters`|`link:dataobjects.html#S3RequestParameters[S3RequestParameters]`|+++
+(Required)
++++
+|[[responseElements]]`@responseElements`|`Json object`|+++
+(Required)
++++
+|[[s3]]`@s3`|`link:dataobjects.html#S3Entity[S3Entity]`|+++
+(Required)
++++
+|[[userIdentity]]`@userIdentity`|`link:dataobjects.html#S3UserIdentity[S3UserIdentity]`|+++
+(Required)
++++
+|===
+
+[[S3Object]]
+== S3Object
+
+
+[cols=">25%,25%,50%"]
+[frame="topbot"]
+|===
+^|Name | Type ^| Description
+|[[key]]`@key`|`String`|+++
+(Required)
++++
+|[[sequencer]]`@sequencer`|`String`|+++
+(Required)
++++
+|[[size]]`@size`|`Number (Integer)`|+++
+(Required)
++++
+|[[urlDecodedKey]]`@urlDecodedKey`|`String`|+++
+(Required)
++++
+|[[versionId]]`@versionId`|`String`|+++
+(Required)
++++
+|===
+
+[[S3RequestParameters]]
+== S3RequestParameters
+
+
+[cols=">25%,25%,50%"]
+[frame="topbot"]
+|===
+^|Name | Type ^| Description
+|[[sourceIPAddress]]`@sourceIPAddress`|`String`|+++
+(Required)
++++
+|===
+
+[[S3UserIdentity]]
+== S3UserIdentity
+
+
+[cols=">25%,25%,50%"]
+[frame="topbot"]
+|===
+^|Name | Type ^| Description
+|[[principalId]]`@principalId`|`String`|+++
+(Required)
++++
+|===
+
+[[SNSEntity]]
+== SNSEntity
+
+
+[cols=">25%,25%,50%"]
+[frame="topbot"]
+|===
+^|Name | Type ^| Description
+|[[message]]`@message`|`String`|+++
+(Required)
++++
+|[[messageAttributes]]`@messageAttributes`|`Json object`|+++
+(Required)
++++
+|[[messageId]]`@messageId`|`String`|+++
+(Required)
++++
+|[[signature]]`@signature`|`String`|+++
+(Required)
++++
+|[[signatureVersion]]`@signatureVersion`|`String`|+++
+(Required)
++++
+|[[signingCertUrl]]`@signingCertUrl`|`String`|+++
+(Required)
++++
+|[[subject]]`@subject`|`String`|+++
+(Required)
++++
+|[[topicArn]]`@topicArn`|`String`|+++
+(Required)
++++
+|[[type]]`@type`|`String`|+++
+(Required)
++++
+|[[unsubscribeUrl]]`@unsubscribeUrl`|`String`|+++
+(Required)
++++
+|===
+
+[[SNSEvent]]
+== SNSEvent
+
+
+[cols=">25%,25%,50%"]
+[frame="topbot"]
+|===
+^|Name | Type ^| Description
+|[[records]]`@records`|`Array of link:dataobjects.html#SNSEventRecord[SNSEventRecord]`|+++
+(Required)
++++
+|===
+
+[[SNSEventRecord]]
+== SNSEventRecord
+
+
+[cols=">25%,25%,50%"]
+[frame="topbot"]
+|===
+^|Name | Type ^| Description
+|[[eventSource]]`@eventSource`|`String`|+++
+(Required)
++++
+|[[eventSubscriptionArn]]`@eventSubscriptionArn`|`String`|+++
+(Required)
++++
+|[[eventVersion]]`@eventVersion`|`String`|+++
+(Required)
++++
+|[[sns]]`@sns`|`link:dataobjects.html#SNSEntity[SNSEntity]`|+++
+(Required)
++++
+|===
+
+[[SQSEvent]]
+== SQSEvent
+
+
+[cols=">25%,25%,50%"]
+[frame="topbot"]
+|===
+^|Name | Type ^| Description
+|[[records]]`@records`|`Array of link:dataobjects.html#SQSMessage[SQSMessage]`|+++
+(Required)
++++
+|===
+
+[[SQSMessage]]
+== SQSMessage
+
+
+[cols=">25%,25%,50%"]
+[frame="topbot"]
+|===
+^|Name | Type ^| Description
+|[[attributes]]`@attributes`|`Json object`|+++
+(Required)
++++
+|[[awsRegion]]`@awsRegion`|`String`|+++
+(Required)
++++
+|[[body]]`@body`|`String`|+++
+(Required)
++++
+|[[eventSource]]`@eventSource`|`String`|+++
+(Required)
++++
+|[[eventSourceARN]]`@eventSourceARN`|`String`|+++
+(Required)
++++
+|[[md5OfBody]]`@md5OfBody`|`String`|+++
+(Required)
++++
+|[[md5OfMessageAttributes]]`@md5OfMessageAttributes`|`String`|+++
+(Required)
++++
+|[[messageAttributes]]`@messageAttributes`|`Json object`|+++
+(Required)
++++
+|[[messageId]]`@messageId`|`String`|+++
+(Required)
++++
+|[[receiptHandle]]`@receiptHandle`|`String`|+++
+(Required)
++++
+|===
+
+[[SecondsEpochTime]]
+== SecondsEpochTime
+
+
+[cols=">25%,25%,50%"]
+[frame="topbot"]
+|===
+^|Name | Type ^| Description
+|===
+
+[[SimpleEmailCommonHeaders]]
+== SimpleEmailCommonHeaders
+
+
+[cols=">25%,25%,50%"]
+[frame="topbot"]
+|===
+^|Name | Type ^| Description
+|[[date]]`@date`|`String`|+++
+(Required)
++++
+|[[from]]`@from`|`Array of String`|+++
+(Required)
++++
+|[[messageId]]`@messageId`|`String`|+++
+(Required)
++++
+|[[returnPath]]`@returnPath`|`String`|+++
+(Required)
++++
+|[[subject]]`@subject`|`String`|+++
+(Required)
++++
+|[[to]]`@to`|`Array of String`|+++
+(Required)
++++
+|===
+
+[[SimpleEmailEvent]]
+== SimpleEmailEvent
+
+
+[cols=">25%,25%,50%"]
+[frame="topbot"]
+|===
+^|Name | Type ^| Description
+|[[records]]`@records`|`Array of link:dataobjects.html#SimpleEmailRecord[SimpleEmailRecord]`|+++
+(Required)
++++
+|===
+
+[[SimpleEmailHeader]]
+== SimpleEmailHeader
+
+
+[cols=">25%,25%,50%"]
+[frame="topbot"]
+|===
+^|Name | Type ^| Description
+|[[name]]`@name`|`String`|+++
+(Required)
++++
+|[[value]]`@value`|`String`|+++
+(Required)
++++
+|===
+
+[[SimpleEmailMessage]]
+== SimpleEmailMessage
+
+
+[cols=">25%,25%,50%"]
+[frame="topbot"]
+|===
+^|Name | Type ^| Description
+|[[commonHeaders]]`@commonHeaders`|`link:dataobjects.html#SimpleEmailCommonHeaders[SimpleEmailCommonHeaders]`|+++
+(Required)
++++
+|[[destination]]`@destination`|`Array of String`|+++
+(Required)
++++
+|[[headers]]`@headers`|`Array of link:dataobjects.html#SimpleEmailHeader[SimpleEmailHeader]`|+++
+(Required)
++++
+|[[headersTruncated]]`@headersTruncated`|`Boolean`|+++
+(Required)
++++
+|[[messageId]]`@messageId`|`String`|+++
+(Required)
++++
+|[[source]]`@source`|`String`|+++
+(Required)
++++
+|===
+
+[[SimpleEmailReceipt]]
+== SimpleEmailReceipt
+
+
+[cols=">25%,25%,50%"]
+[frame="topbot"]
+|===
+^|Name | Type ^| Description
+|[[action]]`@action`|`link:dataobjects.html#SimpleEmailReceiptAction[SimpleEmailReceiptAction]`|+++
+(Required)
++++
+|[[dkimVerdict]]`@dkimVerdict`|`link:dataobjects.html#SimpleEmailVerdict[SimpleEmailVerdict]`|+++
+(Required)
++++
+|[[dmarcPolicy]]`@dmarcPolicy`|`link:dataobjects.html#SimpleEmailVerdict[SimpleEmailVerdict]`|+++
+(Required)
++++
+|[[dmarcVerdict]]`@dmarcVerdict`|`link:dataobjects.html#SimpleEmailVerdict[SimpleEmailVerdict]`|+++
+(Required)
++++
+|[[processingTimeMillis]]`@processingTimeMillis`|`Number (Integer)`|+++
+(Required)
++++
+|[[recipients]]`@recipients`|`Array of String`|+++
+(Required)
++++
+|[[spamVerdict]]`@spamVerdict`|`link:dataobjects.html#SimpleEmailVerdict[SimpleEmailVerdict]`|+++
+(Required)
++++
+|[[spfVerdict]]`@spfVerdict`|`link:dataobjects.html#SimpleEmailVerdict[SimpleEmailVerdict]`|+++
+(Required)
++++
+|[[virusVerdict]]`@virusVerdict`|`link:dataobjects.html#SimpleEmailVerdict[SimpleEmailVerdict]`|+++
+(Required)
++++
+|===
+
+[[SimpleEmailReceiptAction]]
+== SimpleEmailReceiptAction
+
+
+[cols=">25%,25%,50%"]
+[frame="topbot"]
+|===
+^|Name | Type ^| Description
+|[[functionArn]]`@functionArn`|`String`|+++
+(Required)
++++
+|[[invocationType]]`@invocationType`|`String`|+++
+(Required)
++++
+|[[type]]`@type`|`String`|+++
+(Required)
++++
+|===
+
+[[SimpleEmailRecord]]
+== SimpleEmailRecord
+
+
+[cols=">25%,25%,50%"]
+[frame="topbot"]
+|===
+^|Name | Type ^| Description
+|[[eventSource]]`@eventSource`|`String`|+++
+(Required)
++++
+|[[eventVersion]]`@eventVersion`|`String`|+++
+(Required)
++++
+|[[ses]]`@ses`|`link:dataobjects.html#SimpleEmailService[SimpleEmailService]`|+++
+(Required)
++++
+|===
+
+[[SimpleEmailService]]
+== SimpleEmailService
+
+
+[cols=">25%,25%,50%"]
+[frame="topbot"]
+|===
+^|Name | Type ^| Description
+|[[mail]]`@mail`|`link:dataobjects.html#SimpleEmailMessage[SimpleEmailMessage]`|+++
+(Required)
++++
+|[[receipt]]`@receipt`|`link:dataobjects.html#SimpleEmailReceipt[SimpleEmailReceipt]`|+++
+(Required)
++++
+|===
+
+[[SimpleEmailVerdict]]
+== SimpleEmailVerdict
+
+
+[cols=">25%,25%,50%"]
+[frame="topbot"]
+|===
+^|Name | Type ^| Description
+|[[status]]`@status`|`String`|+++
+(Required)
++++
+|===
+

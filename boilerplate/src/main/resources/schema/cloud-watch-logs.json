@@ -1,0 +1,31 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "$ref": "#/definitions/CloudwatchLogsEvent",
+  "definitions": {
+    "CloudwatchLogsEvent": {
+      "required": [
+        "awslogs"
+      ],
+      "properties": {
+        "awslogs": {
+          "$schema": "http://json-schema.org/draft-04/schema#",
+          "$ref": "#/definitions/CloudwatchLogsRawData"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "CloudwatchLogsRawData": {
+      "required": [
+        "data"
+      ],
+      "properties": {
+        "data": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    }
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "$ref": "#/definitions/IoTButtonEvent",
+  "definitions": {
+    "IoTButtonEvent": {
+      "required": [
+        "serialNumber",
+        "clickType",
+        "batteryVoltage"
+      ],
+      "properties": {
+        "batteryVoltage": {
+          "type": "string"
+        },
+        "clickType": {
+          "type": "string"
+        },
+        "serialNumber": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    }
+  }
+}

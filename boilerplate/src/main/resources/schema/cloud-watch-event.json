@@ -1,0 +1,57 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "$ref": "#/definitions/CloudWatchEvent",
+  "definitions": {
+    "CloudWatchEvent": {
+      "required": [
+        "version",
+        "id",
+        "detail-type",
+        "source",
+        "account",
+        "time",
+        "region",
+        "resources",
+        "detail"
+      ],
+      "properties": {
+        "account": {
+          "type": "string"
+        },
+        "detail": {
+          "items": {
+            "type": "integer"
+          },
+          "type": "array"
+        },
+        "detail-type": {
+          "type": "string"
+        },
+        "id": {
+          "type": "string"
+        },
+        "region": {
+          "type": "string"
+        },
+        "resources": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "source": {
+          "type": "string"
+        },
+        "time": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "version": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    }
+  }
+}
