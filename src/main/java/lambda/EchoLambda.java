@@ -19,7 +19,7 @@ import io.vertx.core.Vertx;
 import io.vertx.core.eventbus.DeliveryOptions;
 import io.vertx.core.eventbus.EventBus;
 import io.vertx.core.eventbus.Message;
-import vertx.lambda.Lambda;
+import xyz.jetdrone.vertx.lambda.aws.Lambda;
 
 /**
  * This is a simple example of an echo Lambda.

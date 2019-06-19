@@ -17,9 +17,9 @@ package lambda;
 
 import io.vertx.core.eventbus.Message;
 import io.vertx.core.json.JsonObject;
-import vertx.lambda.Lambda;
-import vertx.lambda.event.APIGatewayProxyRequest;
-import vertx.lambda.event.APIGatewayProxyResponse;
+import xyz.jetdrone.vertx.lambda.aws.Lambda;
+import xyz.jetdrone.vertx.lambda.aws.event.APIGatewayProxyRequest;
+import xyz.jetdrone.vertx.lambda.aws.event.APIGatewayProxyResponse;
 
 /**
  * You can use a Lambda function to process requests from an Application Load Balancer.
@@ -32,6 +32,7 @@ import vertx.lambda.event.APIGatewayProxyResponse;
  * the request body and metadata.
  */
 public class ApplicationLoadBalancerLambda implements Lambda<JsonObject> {
+
   @Override
   public void handle(Message<JsonObject> event) {
     // the payload should be a proxy request

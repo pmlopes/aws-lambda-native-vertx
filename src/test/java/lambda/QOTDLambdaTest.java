@@ -25,7 +25,7 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import vertx.lambda.Lambda;
+import xyz.jetdrone.vertx.lambda.aws.Lambda;
 
 import java.util.ServiceLoader;
 

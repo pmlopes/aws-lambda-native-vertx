@@ -28,7 +28,7 @@ import io.vertx.core.json.JsonObject;
  * one object as input and returns a JSON document.
  *
  * <code>
- *     (msg) -> {
+ *     (msg) -&gt; {
  *         System.out.println(msg.body());
  *         msg.reply(new JsonObject().put("hello", "world"));
  *     }

@@ -13,6 +13,12 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <graal.version>19.0.0</graal.version>
+    <vertx.version>3.7.1</vertx.version>
+    <vertx.lambda.aws.version>0.0.2</vertx.lambda.aws.version>
+    <maven.compiler.target>1.8</maven.compiler.target>
+    <maven.compiler.source>1.8</maven.compiler.source>
+    <maven.compiler.testSource>1.8</maven.compiler.testSource>
+    <maven.compiler.testTarget>1.8</maven.compiler.testTarget>
   </properties>
 
   <dependencyManagement>
@@ -20,7 +26,7 @@
       <dependency>
         <groupId>io.vertx</groupId>
         <artifactId>vertx-stack-depchain</artifactId>
-        <version>3.7.1</version>
+        <version>${vertx.version}</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
@@ -29,24 +35,9 @@
 
   <dependencies>
     <dependency>
-      <groupId>com.oracle.substratevm</groupId>
-      <artifactId>svm-driver</artifactId>
-      <version>${graal.version}</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>io.vertx</groupId>
-      <artifactId>vertx-core</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>io.vertx</groupId>
-      <artifactId>vertx-codegen</artifactId>
-      <scope>provided</scope>
-      <optional>true</optional>
-    </dependency>
-    <dependency>
-      <groupId>io.vertx</groupId>
-      <artifactId>vertx-web-client</artifactId>
+      <groupId>xyz.jetdrone</groupId>
+      <artifactId>vertx.lambda.aws</artifactId>
+      <version>${vertx.lambda.aws.version}</version>
     </dependency>
     <dependency>
       <groupId>io.vertx</groupId>
@@ -62,61 +53,7 @@
   </dependencies>
 
   <build>
-    <pluginManagement>
-      <plugins>
-        <!-- Configure the execution of the compiler to execute the codegen processor -->
-        <plugin>
-          <artifactId>maven-compiler-plugin</artifactId>
-          <version>3.1</version>
-          <configuration>
-            <source>1.8</source>
-            <target>1.8</target>
-            <testSource>1.8</testSource>
-            <testTarget>1.8</testTarget>
-            <encoding>${project.build.sourceEncoding}</encoding>
-          </configuration>
-          <executions>
-            <execution>
-              <id>default-compile</id>
-              <configuration>
-                <annotationProcessors>
-                  <annotationProcessor>io.vertx.codegen.CodeGenProcessor</annotationProcessor>
-                </annotationProcessors>
-                <compilerArgs>
-                  <arg>-Acodegen.output=${project.basedir}/src/main</arg>
-                </compilerArgs>
-              </configuration>
-            </execution>
-          </executions>
-        </plugin>
-      </plugins>
-    </pluginManagement>
-
     <plugins>
-
-      <plugin>
-        <groupId>org.jsonschema2pojo</groupId>
-        <artifactId>jsonschema2pojo-maven-plugin</artifactId>
-        <version>1.0.1</version>
-        <configuration>
-          <sourceDirectory>${basedir}/src/main/resources/schema</sourceDirectory>
-          <targetPackage>vertx.lambda.event.schema</targetPackage>
-          <annotationStyle>none</annotationStyle>
-          <generateBuilders>true</generateBuilders>
-          <includeDynamicBuilders>true</includeDynamicBuilders>
-          <includeAdditionalProperties>true</includeAdditionalProperties>
-          <includeHashcodeAndEquals>false</includeHashcodeAndEquals>
-          <includeToString>false</includeToString>
-          <initializeCollections>false</initializeCollections>
-        </configuration>
-        <executions>
-          <execution>
-            <goals>
-              <goal>generate</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
       <plugin>
         <groupId>com.oracle.substratevm</groupId>
         <artifactId>native-image-maven-plugin</artifactId>
@@ -130,19 +67,26 @@
           </execution>
         </executions>
         <configuration>
-          <mainClass>vertx.lambda.Bootstrap</mainClass>
+          <mainClass>xyz.jetdrone.vertx.lambda.aws.Bootstrap</mainClass>
           <imageName>bootstrap</imageName>
-          <buildArgs>--enable-all-security-services --report-unsupported-elements-at-runtime --allow-incomplete-classpath --no-server</buildArgs>
+          <buildArgs>--report-unsupported-elements-at-runtime --allow-incomplete-classpath --no-server</buildArgs>
         </configuration>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-assembly-plugin</artifactId>
         <version>3.1.1</version>
+        <dependencies>
+          <dependency>
+            <groupId>xyz.jetdrone</groupId>
+            <artifactId>vertx.lambda.aws</artifactId>
+            <version>${vertx.lambda.aws.version}</version>
+          </dependency>
+        </dependencies>
         <configuration>
-          <descriptors>
-            <descriptor>src/assembly/function.xml</descriptor>
-          </descriptors>
+          <descriptorRefs>
+            <descriptorRef>aws-function</descriptorRef>
+          </descriptorRefs>
         </configuration>
         <executions>
           <execution>

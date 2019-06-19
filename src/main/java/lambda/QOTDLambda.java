@@ -17,7 +17,7 @@ package lambda;
 
 import io.vertx.core.buffer.Buffer;
 import io.vertx.core.eventbus.Message;
-import vertx.lambda.Lambda;
+import xyz.jetdrone.vertx.lambda.aws.Lambda;
 
 import java.util.Random;
 
