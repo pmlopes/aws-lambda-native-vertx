@@ -4,20 +4,14 @@
 
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>vertx.lambda.aws</groupId>
+  <groupId>vertx.lambda</groupId>
   <artifactId>lambda</artifactId>
   <version>0.0.1-SNAPSHOT</version>
 
   <name>aws-lambda-vertx-native</name>
 
   <properties>
-    <vertx.verticle>vertx.lambda.Bootstrap</vertx.verticle>
-
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <maven.compiler.target>1.8</maven.compiler.target>
-    <maven.compiler.source>1.8</maven.compiler.source>
-    <maven.compiler.testSource>1.8</maven.compiler.testSource>
-    <maven.compiler.testTarget>1.8</maven.compiler.testTarget>
     <graal.version>19.0.0</graal.version>
   </properties>
 
@@ -46,6 +40,12 @@
     </dependency>
     <dependency>
       <groupId>io.vertx</groupId>
+      <artifactId>vertx-codegen</artifactId>
+      <scope>provided</scope>
+      <optional>true</optional>
+    </dependency>
+    <dependency>
+      <groupId>io.vertx</groupId>
       <artifactId>vertx-web-client</artifactId>
     </dependency>
     <dependency>
@@ -62,18 +62,60 @@
   </dependencies>
 
   <build>
+    <pluginManagement>
+      <plugins>
+        <!-- Configure the execution of the compiler to execute the codegen processor -->
+        <plugin>
+          <artifactId>maven-compiler-plugin</artifactId>
+          <version>3.1</version>
+          <configuration>
+            <source>1.8</source>
+            <target>1.8</target>
+            <testSource>1.8</testSource>
+            <testTarget>1.8</testTarget>
+            <encoding>${project.build.sourceEncoding}</encoding>
+          </configuration>
+          <executions>
+            <execution>
+              <id>default-compile</id>
+              <configuration>
+                <annotationProcessors>
+                  <annotationProcessor>io.vertx.codegen.CodeGenProcessor</annotationProcessor>
+                </annotationProcessors>
+                <compilerArgs>
+                  <arg>-Acodegen.output=${project.basedir}/src/main</arg>
+                </compilerArgs>
+              </configuration>
+            </execution>
+          </executions>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+
     <plugins>
+
       <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-jar-plugin</artifactId>
-        <version>3.0.2</version>
+        <groupId>org.jsonschema2pojo</groupId>
+        <artifactId>jsonschema2pojo-maven-plugin</artifactId>
+        <version>1.0.1</version>
         <configuration>
-          <archive>
-            <manifest>
-              <mainClass>${vertx.verticle}</mainClass>
-            </manifest>
-          </archive>
+          <sourceDirectory>${basedir}/src/main/resources/schema</sourceDirectory>
+          <targetPackage>vertx.lambda.event.schema</targetPackage>
+          <annotationStyle>none</annotationStyle>
+          <generateBuilders>true</generateBuilders>
+          <includeDynamicBuilders>true</includeDynamicBuilders>
+          <includeAdditionalProperties>true</includeAdditionalProperties>
+          <includeHashcodeAndEquals>false</includeHashcodeAndEquals>
+          <includeToString>false</includeToString>
+          <initializeCollections>false</initializeCollections>
         </configuration>
+        <executions>
+          <execution>
+            <goals>
+              <goal>generate</goal>
+            </goals>
+          </execution>
+        </executions>
       </plugin>
       <plugin>
         <groupId>com.oracle.substratevm</groupId>
@@ -88,6 +130,7 @@
           </execution>
         </executions>
         <configuration>
+          <mainClass>vertx.lambda.Bootstrap</mainClass>
           <imageName>bootstrap</imageName>
           <buildArgs>--enable-all-security-services --report-unsupported-elements-at-runtime --allow-incomplete-classpath --no-server</buildArgs>
         </configuration>

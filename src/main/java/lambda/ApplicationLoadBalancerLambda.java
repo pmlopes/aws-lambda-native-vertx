@@ -18,6 +18,8 @@ package lambda;
 import io.vertx.core.eventbus.Message;
 import io.vertx.core.json.JsonObject;
 import vertx.lambda.Lambda;
+import vertx.lambda.event.APIGatewayProxyRequest;
+import vertx.lambda.event.APIGatewayProxyResponse;
 
 /**
  * You can use a Lambda function to process requests from an Application Load Balancer.
@@ -32,15 +34,21 @@ import vertx.lambda.Lambda;
 public class ApplicationLoadBalancerLambda implements Lambda<JsonObject> {
   @Override
   public void handle(Message<JsonObject> event) {
+    // the payload should be a proxy request
+    APIGatewayProxyRequest req = new APIGatewayProxyRequest(event.body());
     // print the payload
-    System.out.println(event.body().encodePrettily());
+    System.out.println(req);
 
-    event.reply(new JsonObject()
-      .put("statusCode", 200)
-      .put("statusDescription", "200 OK")
-      .put("isBase64Encoded", false)
-      .put("headers", new JsonObject()
-        .put("Content-Type", "text/html"))
-      .put("body", "<h1>Hello from Lambda!</h1>"));
+    // Here your business logic...
+
+    event.reply(
+      new APIGatewayProxyResponse()
+        .setStatusCode(200)
+        .setIsBase64Encoded(false)
+        .setHeaders(new JsonObject()
+            .put("Content-Type", "text/html"))
+        .setBody("<h1>Hello from Lambda!</h1>")
+      // convert to JSON as it's the expected format by lambda
+      .toJson());
   }
 }

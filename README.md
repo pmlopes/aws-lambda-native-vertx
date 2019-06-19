@@ -69,7 +69,7 @@ aws lambda publish-layer-version \
 aws lambda delete-function --function-name vertxNativeTester
 
 aws lambda create-function --function-name vertxNativeTester \
-    --zip-file fileb://target/lambda-0.0.1-SNAPSHOT-function.zip --handler lambda.EchoLambda --runtime provided \
+    --zip-file fileb://target/lambda-0.0.1-SNAPSHOT-function.zip --handler lambda.ApplicationLoadBalancerLambda --runtime provided \
     --role arn:aws:iam::985727241951:role/service-role/lambda-role
 ```
 
