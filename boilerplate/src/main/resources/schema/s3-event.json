@@ -1,0 +1,177 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "$ref": "#/definitions/S3Event",
+  "definitions": {
+    "S3Bucket": {
+      "required": [
+        "name",
+        "ownerIdentity",
+        "arn"
+      ],
+      "properties": {
+        "arn": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "ownerIdentity": {
+          "$ref": "#/definitions/S3UserIdentity"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "S3Entity": {
+      "required": [
+        "s3SchemaVersion",
+        "configurationId",
+        "bucket",
+        "object"
+      ],
+      "properties": {
+        "bucket": {
+          "$schema": "http://json-schema.org/draft-04/schema#",
+          "$ref": "#/definitions/S3Bucket"
+        },
+        "configurationId": {
+          "type": "string"
+        },
+        "object": {
+          "$schema": "http://json-schema.org/draft-04/schema#",
+          "$ref": "#/definitions/S3Object"
+        },
+        "s3SchemaVersion": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "S3Event": {
+      "required": [
+        "Records"
+      ],
+      "properties": {
+        "Records": {
+          "items": {
+            "$schema": "http://json-schema.org/draft-04/schema#",
+            "$ref": "#/definitions/S3EventRecord"
+          },
+          "type": "array"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "S3EventRecord": {
+      "required": [
+        "eventVersion",
+        "eventSource",
+        "awsRegion",
+        "eventTime",
+        "eventName",
+        "userIdentity",
+        "requestParameters",
+        "responseElements",
+        "s3"
+      ],
+      "properties": {
+        "awsRegion": {
+          "type": "string"
+        },
+        "eventName": {
+          "type": "string"
+        },
+        "eventSource": {
+          "type": "string"
+        },
+        "eventTime": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "eventVersion": {
+          "type": "string"
+        },
+        "requestParameters": {
+          "$schema": "http://json-schema.org/draft-04/schema#",
+          "$ref": "#/definitions/S3RequestParameters"
+        },
+        "responseElements": {
+          "patternProperties": {
+            ".*": {
+              "type": "string"
+            }
+          },
+          "type": "object"
+        },
+        "s3": {
+          "$schema": "http://json-schema.org/draft-04/schema#",
+          "$ref": "#/definitions/S3Entity"
+        },
+        "userIdentity": {
+          "$schema": "http://json-schema.org/draft-04/schema#",
+          "$ref": "#/definitions/S3UserIdentity"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "S3Object": {
+      "required": [
+        "key",
+        "size",
+        "urlDecodedKey",
+        "versionId",
+        "eTag",
+        "sequencer"
+      ],
+      "properties": {
+        "eTag": {
+          "type": "string"
+        },
+        "key": {
+          "type": "string"
+        },
+        "sequencer": {
+          "type": "string"
+        },
+        "size": {
+          "type": "integer"
+        },
+        "urlDecodedKey": {
+          "type": "string"
+        },
+        "versionId": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "S3RequestParameters": {
+      "required": [
+        "sourceIPAddress"
+      ],
+      "properties": {
+        "sourceIPAddress": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "S3UserIdentity": {
+      "required": [
+        "principalId"
+      ],
+      "properties": {
+        "principalId": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    }
+  }
+}

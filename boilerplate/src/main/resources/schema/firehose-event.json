@@ -1,0 +1,62 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "$ref": "#/definitions/KinesisFirehoseEvent",
+  "definitions": {
+    "KinesisFirehoseEvent": {
+      "required": [
+        "invocationId",
+        "deliveryStreamArn",
+        "region",
+        "records"
+      ],
+      "properties": {
+        "deliveryStreamArn": {
+          "type": "string"
+        },
+        "invocationId": {
+          "type": "string"
+        },
+        "records": {
+          "items": {
+            "$schema": "http://json-schema.org/draft-04/schema#",
+            "$ref": "#/definitions/KinesisFirehoseEventRecord"
+          },
+          "type": "array"
+        },
+        "region": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "KinesisFirehoseEventRecord": {
+      "required": [
+        "recordId",
+        "approximateArrivalTimestamp",
+        "data"
+      ],
+      "properties": {
+        "approximateArrivalTimestamp": {
+          "$schema": "http://json-schema.org/draft-04/schema#",
+          "$ref": "#/definitions/MilliSecondsEpochTime"
+        },
+        "data": {
+          "type": "string",
+          "media": {
+            "binaryEncoding": "base64"
+          }
+        },
+        "recordId": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "MilliSecondsEpochTime": {
+      "additionalProperties": false,
+      "type": "object"
+    }
+  }
+}

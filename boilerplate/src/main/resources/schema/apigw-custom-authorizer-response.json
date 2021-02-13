@@ -1,0 +1,81 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "$ref": "#/definitions/APIGatewayCustomAuthorizerResponse",
+  "definitions": {
+    "APIGatewayCustomAuthorizerPolicy": {
+      "required": [
+        "Version",
+        "Statement"
+      ],
+      "properties": {
+        "Statement": {
+          "items": {
+            "$schema": "http://json-schema.org/draft-04/schema#",
+            "$ref": "#/definitions/IAMPolicyStatement"
+          },
+          "type": "array"
+        },
+        "Version": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "APIGatewayCustomAuthorizerResponse": {
+      "required": [
+        "principalId",
+        "policyDocument"
+      ],
+      "properties": {
+        "context": {
+          "patternProperties": {
+            ".*": {
+              "additionalProperties": true,
+              "type": "object"
+            }
+          },
+          "type": "object"
+        },
+        "policyDocument": {
+          "$schema": "http://json-schema.org/draft-04/schema#",
+          "$ref": "#/definitions/APIGatewayCustomAuthorizerPolicy"
+        },
+        "principalId": {
+          "type": "string"
+        },
+        "usageIdentifierKey": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "IAMPolicyStatement": {
+      "required": [
+        "Action",
+        "Effect",
+        "Resource"
+      ],
+      "properties": {
+        "Action": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "Effect": {
+          "type": "string"
+        },
+        "Resource": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    }
+  }
+}

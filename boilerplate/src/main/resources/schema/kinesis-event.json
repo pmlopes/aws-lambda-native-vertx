@@ -1,0 +1,102 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "$ref": "#/definitions/KinesisEvent",
+  "definitions": {
+    "KinesisEvent": {
+      "required": [
+        "Records"
+      ],
+      "properties": {
+        "Records": {
+          "items": {
+            "$schema": "http://json-schema.org/draft-04/schema#",
+            "$ref": "#/definitions/KinesisEventRecord"
+          },
+          "type": "array"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "KinesisEventRecord": {
+      "required": [
+        "awsRegion",
+        "eventID",
+        "eventName",
+        "eventSource",
+        "eventSourceARN",
+        "eventVersion",
+        "invokeIdentityArn",
+        "kinesis"
+      ],
+      "properties": {
+        "awsRegion": {
+          "type": "string"
+        },
+        "eventID": {
+          "type": "string"
+        },
+        "eventName": {
+          "type": "string"
+        },
+        "eventSource": {
+          "type": "string"
+        },
+        "eventSourceARN": {
+          "type": "string"
+        },
+        "eventVersion": {
+          "type": "string"
+        },
+        "invokeIdentityArn": {
+          "type": "string"
+        },
+        "kinesis": {
+          "$schema": "http://json-schema.org/draft-04/schema#",
+          "$ref": "#/definitions/KinesisRecord"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "KinesisRecord": {
+      "required": [
+        "approximateArrivalTimestamp",
+        "data",
+        "partitionKey",
+        "sequenceNumber",
+        "kinesisSchemaVersion"
+      ],
+      "properties": {
+        "approximateArrivalTimestamp": {
+          "$schema": "http://json-schema.org/draft-04/schema#",
+          "$ref": "#/definitions/SecondsEpochTime"
+        },
+        "data": {
+          "type": "string",
+          "media": {
+            "binaryEncoding": "base64"
+          }
+        },
+        "encryptionType": {
+          "type": "string"
+        },
+        "kinesisSchemaVersion": {
+          "type": "string"
+        },
+        "partitionKey": {
+          "type": "string"
+        },
+        "sequenceNumber": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "SecondsEpochTime": {
+      "additionalProperties": false,
+      "type": "object"
+    }
+  }
+}

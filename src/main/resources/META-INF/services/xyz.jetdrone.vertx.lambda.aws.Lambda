@@ -1,0 +1,4 @@
+lambda.EchoLambda
+lambda.QOTDLambda
+lambda.DebugLambda
+lambda.ApplicationLoadBalancerLambda

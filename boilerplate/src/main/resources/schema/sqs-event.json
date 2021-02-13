@@ -1,0 +1,119 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "$ref": "#/definitions/SQSEvent",
+  "definitions": {
+    "SQSEvent": {
+      "required": [
+        "Records"
+      ],
+      "properties": {
+        "Records": {
+          "items": {
+            "$schema": "http://json-schema.org/draft-04/schema#",
+            "$ref": "#/definitions/SQSMessage"
+          },
+          "type": "array"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "SQSMessage": {
+      "required": [
+        "messageId",
+        "receiptHandle",
+        "body",
+        "md5OfBody",
+        "md5OfMessageAttributes",
+        "attributes",
+        "messageAttributes",
+        "eventSourceARN",
+        "eventSource",
+        "awsRegion"
+      ],
+      "properties": {
+        "attributes": {
+          "patternProperties": {
+            ".*": {
+              "type": "string"
+            }
+          },
+          "type": "object"
+        },
+        "awsRegion": {
+          "type": "string"
+        },
+        "body": {
+          "type": "string"
+        },
+        "eventSource": {
+          "type": "string"
+        },
+        "eventSourceARN": {
+          "type": "string"
+        },
+        "md5OfBody": {
+          "type": "string"
+        },
+        "md5OfMessageAttributes": {
+          "type": "string"
+        },
+        "messageAttributes": {
+          "patternProperties": {
+            ".*": {
+              "$schema": "http://json-schema.org/draft-04/schema#",
+              "$ref": "#/definitions/SQSMessageAttribute"
+            }
+          },
+          "type": "object"
+        },
+        "messageId": {
+          "type": "string"
+        },
+        "receiptHandle": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "SQSMessageAttribute": {
+      "required": [
+        "stringListValues",
+        "binaryListValues",
+        "dataType"
+      ],
+      "properties": {
+        "binaryListValues": {
+          "items": {
+            "type": "string",
+            "media": {
+              "binaryEncoding": "base64"
+            }
+          },
+          "type": "array"
+        },
+        "binaryValue": {
+          "type": "string",
+          "media": {
+            "binaryEncoding": "base64"
+          }
+        },
+        "dataType": {
+          "type": "string"
+        },
+        "stringListValues": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "stringValue": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    }
+  }
+}

@@ -1,0 +1,177 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "$ref": "#/definitions/APIGatewayProxyRequest",
+  "definitions": {
+    "APIGatewayProxyRequest": {
+      "required": [
+        "resource",
+        "path",
+        "httpMethod",
+        "headers",
+        "queryStringParameters",
+        "pathParameters",
+        "stageVariables",
+        "requestContext",
+        "body"
+      ],
+      "properties": {
+        "body": {
+          "type": "string"
+        },
+        "headers": {
+          "patternProperties": {
+            ".*": {
+              "type": "string"
+            }
+          },
+          "type": "object"
+        },
+        "httpMethod": {
+          "type": "string"
+        },
+        "isBase64Encoded": {
+          "type": "boolean"
+        },
+        "path": {
+          "type": "string"
+        },
+        "pathParameters": {
+          "patternProperties": {
+            ".*": {
+              "type": "string"
+            }
+          },
+          "type": "object"
+        },
+        "queryStringParameters": {
+          "patternProperties": {
+            ".*": {
+              "type": "string"
+            }
+          },
+          "type": "object"
+        },
+        "requestContext": {
+          "$schema": "http://json-schema.org/draft-04/schema#",
+          "$ref": "#/definitions/APIGatewayProxyRequestContext"
+        },
+        "resource": {
+          "type": "string"
+        },
+        "stageVariables": {
+          "patternProperties": {
+            ".*": {
+              "type": "string"
+            }
+          },
+          "type": "object"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "APIGatewayProxyRequestContext": {
+      "required": [
+        "accountId",
+        "resourceId",
+        "stage",
+        "requestId",
+        "identity",
+        "resourcePath",
+        "authorizer",
+        "httpMethod",
+        "apiId"
+      ],
+      "properties": {
+        "accountId": {
+          "type": "string"
+        },
+        "apiId": {
+          "type": "string"
+        },
+        "authorizer": {
+          "patternProperties": {
+            ".*": {
+              "additionalProperties": true,
+              "type": "object"
+            }
+          },
+          "type": "object"
+        },
+        "httpMethod": {
+          "type": "string"
+        },
+        "identity": {
+          "$schema": "http://json-schema.org/draft-04/schema#",
+          "$ref": "#/definitions/APIGatewayRequestIdentity"
+        },
+        "requestId": {
+          "type": "string"
+        },
+        "resourceId": {
+          "type": "string"
+        },
+        "resourcePath": {
+          "type": "string"
+        },
+        "stage": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "APIGatewayRequestIdentity": {
+      "required": [
+        "cognitoIdentityPoolId",
+        "accountId",
+        "cognitoIdentityId",
+        "caller",
+        "apiKey",
+        "sourceIp",
+        "cognitoAuthenticationType",
+        "cognitoAuthenticationProvider",
+        "userArn",
+        "userAgent",
+        "user"
+      ],
+      "properties": {
+        "accountId": {
+          "type": "string"
+        },
+        "apiKey": {
+          "type": "string"
+        },
+        "caller": {
+          "type": "string"
+        },
+        "cognitoAuthenticationProvider": {
+          "type": "string"
+        },
+        "cognitoAuthenticationType": {
+          "type": "string"
+        },
+        "cognitoIdentityId": {
+          "type": "string"
+        },
+        "cognitoIdentityPoolId": {
+          "type": "string"
+        },
+        "sourceIp": {
+          "type": "string"
+        },
+        "user": {
+          "type": "string"
+        },
+        "userAgent": {
+          "type": "string"
+        },
+        "userArn": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    }
+  }
+}

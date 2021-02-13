@@ -4,21 +4,21 @@
 
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>com.example</groupId>
-  <artifactId>myapp</artifactId>
+  <groupId>vertx.lambda</groupId>
+  <artifactId>lambda</artifactId>
   <version>0.0.1-SNAPSHOT</version>
 
   <name>aws-lambda-vertx-native</name>
 
   <properties>
-    <vertx.verticle>vertx.lambda.LambdaBootstrap</vertx.verticle>
-
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <graal.version>19.0.0</graal.version>
+    <vertx.version>3.7.1</vertx.version>
+    <vertx.lambda.aws.version>0.0.2</vertx.lambda.aws.version>
     <maven.compiler.target>1.8</maven.compiler.target>
     <maven.compiler.source>1.8</maven.compiler.source>
     <maven.compiler.testSource>1.8</maven.compiler.testSource>
     <maven.compiler.testTarget>1.8</maven.compiler.testTarget>
-    <graal.version>19.0.0</graal.version>
   </properties>
 
   <dependencyManagement>
@@ -26,7 +26,7 @@
       <dependency>
         <groupId>io.vertx</groupId>
         <artifactId>vertx-stack-depchain</artifactId>
-        <version>3.7.1</version>
+        <version>${vertx.version}</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
@@ -35,18 +35,9 @@
 
   <dependencies>
     <dependency>
-      <groupId>com.oracle.substratevm</groupId>
-      <artifactId>svm-driver</artifactId>
-      <version>${graal.version}</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>io.vertx</groupId>
-      <artifactId>vertx-core</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>io.vertx</groupId>
-      <artifactId>vertx-web-client</artifactId>
+      <groupId>xyz.jetdrone</groupId>
+      <artifactId>vertx.lambda.aws</artifactId>
+      <version>${vertx.lambda.aws.version}</version>
     </dependency>
     <dependency>
       <groupId>io.vertx</groupId>
@@ -64,18 +55,6 @@
   <build>
     <plugins>
       <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-jar-plugin</artifactId>
-        <version>3.0.2</version>
-        <configuration>
-          <archive>
-            <manifest>
-              <mainClass>${vertx.verticle}</mainClass>
-            </manifest>
-          </archive>
-        </configuration>
-      </plugin>
-      <plugin>
         <groupId>com.oracle.substratevm</groupId>
         <artifactId>native-image-maven-plugin</artifactId>
         <version>${graal.version}</version>
@@ -88,9 +67,35 @@
           </execution>
         </executions>
         <configuration>
-          <imageName>lambda</imageName>
-          <buildArgs>--enable-all-security-services --report-unsupported-elements-at-runtime --allow-incomplete-classpath</buildArgs>
+          <mainClass>xyz.jetdrone.vertx.lambda.aws.Bootstrap</mainClass>
+          <imageName>bootstrap</imageName>
+          <buildArgs>--report-unsupported-elements-at-runtime --allow-incomplete-classpath --no-server</buildArgs>
         </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <version>3.1.1</version>
+        <dependencies>
+          <dependency>
+            <groupId>xyz.jetdrone</groupId>
+            <artifactId>vertx.lambda.aws</artifactId>
+            <version>${vertx.lambda.aws.version}</version>
+          </dependency>
+        </dependencies>
+        <configuration>
+          <descriptorRefs>
+            <descriptorRef>aws-function</descriptorRef>
+          </descriptorRefs>
+        </configuration>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>single</goal>
+            </goals>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
   </build>

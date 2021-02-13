@@ -1,0 +1,205 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "$ref": "#/definitions/LexEvent",
+  "definitions": {
+    "Attachment": {
+      "properties": {
+        "attachmentLinkUrl": {
+          "type": "string"
+        },
+        "buttons": {
+          "items": {
+            "patternProperties": {
+              ".*": {
+                "type": "string"
+              }
+            },
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "imageUrl": {
+          "type": "string"
+        },
+        "subTitle": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "LexBot": {
+      "properties": {
+        "alias": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "version": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "LexCurrentIntent": {
+      "properties": {
+        "confirmationStatus": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "slotDetails": {
+          "patternProperties": {
+            ".*": {
+              "$schema": "http://json-schema.org/draft-04/schema#",
+              "$ref": "#/definitions/SlotDetail"
+            }
+          },
+          "type": "object"
+        },
+        "slots": {
+          "patternProperties": {
+            ".*": {
+              "type": "string"
+            }
+          },
+          "type": "object"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "LexDialogAction": {
+      "properties": {
+        "fulfillmentState": {
+          "type": "string"
+        },
+        "intentName": {
+          "type": "string"
+        },
+        "message": {
+          "patternProperties": {
+            ".*": {
+              "type": "string"
+            }
+          },
+          "type": "object"
+        },
+        "responseCard": {
+          "$schema": "http://json-schema.org/draft-04/schema#",
+          "$ref": "#/definitions/LexResponseCard"
+        },
+        "slotToElicit": {
+          "type": "string"
+        },
+        "slots": {
+          "patternProperties": {
+            ".*": {
+              "type": "string"
+            }
+          },
+          "type": "object"
+        },
+        "type": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "LexEvent": {
+      "properties": {
+        "bot": {
+          "$schema": "http://json-schema.org/draft-04/schema#",
+          "$ref": "#/definitions/LexBot"
+        },
+        "currentIntent": {
+          "$schema": "http://json-schema.org/draft-04/schema#",
+          "$ref": "#/definitions/LexCurrentIntent"
+        },
+        "dialogAction": {
+          "$schema": "http://json-schema.org/draft-04/schema#",
+          "$ref": "#/definitions/LexDialogAction"
+        },
+        "inputTranscript": {
+          "type": "string"
+        },
+        "invocationSource": {
+          "type": "string"
+        },
+        "messageVersion": {
+          "type": "string"
+        },
+        "outputDialogMode": {
+          "type": "string"
+        },
+        "requestAttributes": {
+          "patternProperties": {
+            ".*": {
+              "type": "string"
+            }
+          },
+          "type": "object"
+        },
+        "sessionAttributes": {
+          "patternProperties": {
+            ".*": {
+              "type": "string"
+            }
+          },
+          "type": "object"
+        },
+        "userId": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "LexResponseCard": {
+      "properties": {
+        "contentType": {
+          "type": "string"
+        },
+        "genericAttachments": {
+          "items": {
+            "$schema": "http://json-schema.org/draft-04/schema#",
+            "$ref": "#/definitions/Attachment"
+          },
+          "type": "array"
+        },
+        "version": {
+          "type": "integer"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "SlotDetail": {
+      "properties": {
+        "originalValue": {
+          "type": "string"
+        },
+        "resolutions": {
+          "items": {
+            "patternProperties": {
+              ".*": {
+                "type": "string"
+              }
+            },
+            "type": "object"
+          },
+          "type": "array"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    }
+  }
+}

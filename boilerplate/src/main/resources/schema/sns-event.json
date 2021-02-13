@@ -1,0 +1,106 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "$ref": "#/definitions/SNSEvent",
+  "definitions": {
+    "SNSEntity": {
+      "required": [
+        "Signature",
+        "MessageId",
+        "Type",
+        "TopicArn",
+        "MessageAttributes",
+        "SignatureVersion",
+        "Timestamp",
+        "SigningCertUrl",
+        "Message",
+        "UnsubscribeUrl",
+        "Subject"
+      ],
+      "properties": {
+        "Message": {
+          "type": "string"
+        },
+        "MessageAttributes": {
+          "patternProperties": {
+            ".*": {
+              "additionalProperties": true,
+              "type": "object"
+            }
+          },
+          "type": "object"
+        },
+        "MessageId": {
+          "type": "string"
+        },
+        "Signature": {
+          "type": "string"
+        },
+        "SignatureVersion": {
+          "type": "string"
+        },
+        "SigningCertUrl": {
+          "type": "string"
+        },
+        "Subject": {
+          "type": "string"
+        },
+        "Timestamp": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "TopicArn": {
+          "type": "string"
+        },
+        "Type": {
+          "type": "string"
+        },
+        "UnsubscribeUrl": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "SNSEvent": {
+      "required": [
+        "Records"
+      ],
+      "properties": {
+        "Records": {
+          "items": {
+            "$schema": "http://json-schema.org/draft-04/schema#",
+            "$ref": "#/definitions/SNSEventRecord"
+          },
+          "type": "array"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "SNSEventRecord": {
+      "required": [
+        "EventVersion",
+        "EventSubscriptionArn",
+        "EventSource",
+        "Sns"
+      ],
+      "properties": {
+        "EventSource": {
+          "type": "string"
+        },
+        "EventSubscriptionArn": {
+          "type": "string"
+        },
+        "EventVersion": {
+          "type": "string"
+        },
+        "Sns": {
+          "$schema": "http://json-schema.org/draft-04/schema#",
+          "$ref": "#/definitions/SNSEntity"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    }
+  }
+}
